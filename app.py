@@ -20,7 +20,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-image_path = Path("assets/thumbs_up.jpg")
+image_path = Path("assets/thumbs_up.jpeg")
 
 if image_path.exists():
     col1, col2, col3 = st.columns([1, 3, 1])
