@@ -1,23 +1,48 @@
-import streamlit as st
 import random
+from pathlib import Path
 
-st.title("<h1 style='text-align: center;'>Daily Affirmations ✨</h1>", unsafe_allow_html=True)
+import streamlit as st
+
+
+st.set_page_config(
+    page_title="Daily Affirmations",
+    page_icon="✨",
+    layout="centered"
+)
+
+st.markdown(
+    "<h1 style='text-align: center;'>Daily Affirmations ✨</h1>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "<p style='text-align: center; font-size: 18px;'>A small reminder that you are doing okay.</p>",
+    unsafe_allow_html=True
+)
 
 image_path = Path("assets/thumbs_up.jpg")
 
 if image_path.exists():
-    st.image(str(image_path), width=750, height=400)
+    col1, col2, col3 = st.columns([1, 3, 1])
+    with col2:
+        st.image(str(image_path), use_container_width=True)
 else:
-    st.warning("Image not found.")
+    st.warning("Image not found. Please check assets/thumbs_up.jpg")
 
-with open("data/affirmations.txt", "r") as file:
+affirmations_path = Path("data/affirmations.txt")
+
+with open(affirmations_path, "r") as file:
     affirmations = file.readlines()
 
-affirmations = [line.strip() for line in affirmations if line.strip()]
+cleaned_affirmations = []
 
-affirmation = random.choice(affirmations)
+for line in affirmations:
+    cleaned_line = line.strip()
 
-st.success(affirmation)
+    if cleaned_line:
+        cleaned_affirmations.append(cleaned_line)
+
+affirmation = random.choice(cleaned_affirmations)
 
 st.markdown(
     f"""
@@ -25,9 +50,10 @@ st.markdown(
         text-align: center;
         font-size: 28px;
         padding: 30px;
-        margin-top: 20px;
+        margin-top: 25px;
         border-radius: 20px;
         background-color: #f5f5f5;
+        line-height: 1.4;
     ">
         {affirmation}
     </div>
