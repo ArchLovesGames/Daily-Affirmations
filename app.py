@@ -3,7 +3,7 @@ import random
 
 st.title("✨Daily affirmations✨")
 
-st.image("assets/thumbs_up.jpg", width=250)
+st.image("assets/thumbs_up.jpeg", width=250)
 
 with open("data/affirmations.txt", r) as file:
     affirmations = file.readlines()
