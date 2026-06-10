@@ -106,10 +106,6 @@ See `contributing.md` for ways to get started.
 Please adhere to this project's `code of conduct`.
 
 
-## Screenshots
-
-![App Screenshot](https://dummyimage.com/468x300?text=App+Screenshot+Here)
-
 
 ## Support
 
