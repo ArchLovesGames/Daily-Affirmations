@@ -1,5 +1,5 @@
 ---
-description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
+description: 1. Write down the affirmation messages 2. Code the basic MVP using python importing streamlit 3. Add any finishing touches to the UI 4. (Optional) Add a feature where translation is possible
 handoffs: 
   - label: Analyze For Consistency
     agent: speckit.analyze

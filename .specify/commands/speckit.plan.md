@@ -1,5 +1,5 @@
 ---
-description: Execute the implementation planning workflow using the plan template to generate design artifacts.
+description: The application uses basic spacelit to run the application. Basic python coding needed, no database or ai dependency. Just rotating 45 daily affirmation messages.
 handoffs: 
   - label: Create Tasks
     agent: speckit.tasks

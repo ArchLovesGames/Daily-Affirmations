@@ -1,9 +1,8 @@
 ---
-description: Create or update the feature specification from a natural language feature description.
-handoffs: 
+description: Build a very simple application, free of any AI agent dependencies or complex coding, that provides the user a simple cyclable daily affirmations from a preset list. It uses spacelit to build the ui and host the app without major complex code.
   - label: Build Technical Plan
     agent: speckit.plan
-    prompt: Create a plan for the spec. I am building with...
+    prompt: Create a plan for the spec. I am building with spacelit 
   - label: Clarify Spec Requirements
     agent: speckit.clarify
     prompt: Clarify specification requirements
