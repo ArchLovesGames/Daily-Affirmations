@@ -48,6 +48,7 @@ st.markdown(
     f"""
     <div style="
         text-align: center;
+        color: #222222;
         font-size: 28px;
         padding: 30px;
         margin-top: 25px;
