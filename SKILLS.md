@@ -43,9 +43,11 @@ Then create and work with:
 - [ ] Files are UTF-8 compatible
 
 ---
+
 name: streamlit-ui-development
 description: Add the intended translation and localisation support to the base application
 ---
+
 
 # Streamlit UI Development
 
