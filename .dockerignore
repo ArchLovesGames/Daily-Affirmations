@@ -1,6 +1,6 @@
+echo ".git
 .venv
 __pycache__
 *.pyc
 .env
-.git
-.DS_Store
+.DS_Store" > .dockerignore

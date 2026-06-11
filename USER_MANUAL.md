@@ -1,30 +1,26 @@
+### `USER_MANUAL.md`
+
+```md
 # User Manual
 
-## Pocket Finance Tracker
+## Daily Affirmations
 
-Pocket Finance Tracker is a simple Streamlit app that helps you view income, expenses, savings, and category budgets.
+Daily Affirmations is a simple Streamlit app that displays a random positive affirmation. This was made for a hackathon project.
 
-## How To Use
+## How to Use
 
 1. Open the app.
-2. Review the summary metrics at the top of the dashboard.
-3. Use the month and category filters to narrow the transactions.
-4. Add a new transaction from the sidebar form.
-5. Check the charts and budget progress bars.
-6. Download the filtered transaction table if you need a CSV copy.
+2. View the displayed affirmation.
+3. Refresh the page to see another random affirmation.
 
 ## Features
 
-- Starter transaction dataset
-- Manual transaction entry
-- Income, expense, savings, and savings-rate metrics
-- Monthly cash-flow chart
-- Expense category chart
-- Budget progress indicators
-- CSV download button
+- Random affirmation display from a set of 50 preset affirmations
+- Frontend image
+- Simple Streamlit interface
 
 ## Files Used
 
-- `app.py` contains the Streamlit app code.
-- `data/sample_transactions.csv` contains starter finance records.
-- `.streamlit/config.toml` contains basic Streamlit theme settings.
+- `app.py` contains the app code.
+- `data/affirmations.txt` contains the affirmations.
+- `assets/thumbs_up.jpg` contains the frontend image.
