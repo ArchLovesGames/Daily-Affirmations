@@ -1,5 +1,5 @@
 ---
-description: 1. Write down the affirmation messages 2. Code the basic MVP using python importing streamlit 3. Add any finishing touches to the UI 4. (Optional) Add a feature where translation is possible
+description: 0. Prestep: Find sources for affirmations in English, Telugu and Hindi, and compile 200 in each language 1. Compile the affirmations in English, Hindi, and Telugu into three seperate files to be put into the data folder 2. Add a language change feature on the streamlit website which can allow the user to change selected language 3. Ensure that the language change functionality also changes the language on the landing page 
 handoffs: 
   - label: Analyze For Consistency
     agent: speckit.analyze

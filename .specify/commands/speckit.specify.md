@@ -1,5 +1,5 @@
 ---
-description: Build a very simple application, free of any AI agent dependencies or complex coding, that provides the user a simple cyclable daily affirmations from a preset list. It uses spacelit to build the ui and host the app without major complex code.
+description: Without major edits to the base functionality, localise this program to Hindi and Telugu languages in addition to English, and increase the number of affirmations in the dataset to 200. Since translation may not be accurate localisation, use open source affirmation quotes to fill the database instead.
   - label: Build Technical Plan
     agent: speckit.plan
     prompt: Create a plan for the spec. I am building with spacelit 

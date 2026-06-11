@@ -1,5 +1,5 @@
 ---
-description: The application uses basic spacelit to run the application. Basic python coding needed, no database or ai dependency. Just rotating 45 daily affirmation messages.
+description: This is a base application which needs to be localised into English, Hindi and Telugu, with a language select option. The number of premade affirmations set must be increased to 200.
 handoffs: 
   - label: Create Tasks
     agent: speckit.tasks

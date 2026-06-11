@@ -3,9 +3,9 @@
 
 ## Core Principles
 
-### [Manual Code]
+### [OPEN SOURCE ONLY]
 <!-- Example: I. Library-First -->
-[This app is to be manually coded by me, using AI assistants only as a means of addressing doubts should the need arise.]
+[Do not strip content from the internet that may have a license. Instead use free and open source data.]
 <!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
 ### [Simple Interface]
@@ -18,10 +18,10 @@
 [This app should not be a hassle to navigate and made user friendly]
 <!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### [Accessible for all]
-<!-- Example: IV. Integration Testing -->
-[Find a way to integrate language support so it can be used globally]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### [Localisation is not translation]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[Direct translation from one language to another is NOT localisation. Instead, if quotes are needed, import from open source]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
 
 ## Governance
