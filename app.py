@@ -33,7 +33,7 @@ LANGUAGES = {
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
-        "assistant_error": "The assistant could not respond yet. Please check the settings and try again.",
+        "assistant_error": "AI reflection is unavailable right now, but your daily affirmation is still here for you.",
     },
     "हिन्दी": {
         "code": "hi",
@@ -59,7 +59,7 @@ LANGUAGES = {
         "generate_button": "व्यक्तिगत सकारात्मक वाक्य बनाएं",
         "empty_reflection": "कृपया पहले एक छोटा विचार लिखें।",
         "missing_key": "कृपया BYOT मोड के लिए अपनी API कुंजी डालें।",
-        "assistant_error": "सहायक अभी उत्तर नहीं दे पाया। कृपया सेटिंग जांचकर फिर कोशिश करें।",
+        "assistant_error": "AI मनन अभी उपलब्ध नहीं है, लेकिन आपका दैनिक सकारात्मक वाक्य अभी भी आपके साथ है।",
     },
     "తెలుగు": {
         "code": "te",
@@ -85,7 +85,7 @@ LANGUAGES = {
         "generate_button": "వ్యక్తిగత ధైర్య వాక్యం తయారు చేయండి",
         "empty_reflection": "దయచేసి ముందుగా ఒక చిన్న ఆలోచన రాయండి.",
         "missing_key": "దయచేసి BYOT మోడ్ కోసం మీ API కీ ఇవ్వండి.",
-        "assistant_error": "సహాయకుడు ఇప్పుడే స్పందించలేకపోయాడు. సెట్టింగ్స్ చూసి మళ్లీ ప్రయత్నించండి.",
+        "assistant_error": "AI ఆలోచన సహాయం ప్రస్తుతం అందుబాటులో లేదు, కానీ మీ రోజువారీ ధైర్య వాక్యం మీకోసం ఉంది.",
     },
 }
 
@@ -114,12 +114,16 @@ def build_reflection_prompt(reflection, selected_language_name, selected_languag
     return (
         "You are a gentle daily reflection assistant for a Daily Affirmations app. "
         "Read the user's short reflection and write one brief, personal affirmation. "
-        "Use the same language as the user's reflection when it is clear. "
-        f"If the reflection language is unclear, use the selected app language: "
-        f"{selected_language_name} ({selected_language_code}). "
+        f"Prefer the selected app language: {selected_language_name} "
+        f"({selected_language_code}). "
+        "Only switch to the user's typed language if the user is clearly writing "
+        "in a different supported language. "
         "Keep the response to one or two short sentences. "
         "Do not give medical, legal, political, or religious advice. "
-        "Do not diagnose the user. Keep it warm, practical, and safe.\n\n"
+        "Do not diagnose the user. "
+        "If the reflection sounds serious or unsafe, respond gently and suggest "
+        "reaching out to a trusted person or local support. "
+        "Keep it warm, practical, and safe.\n\n"
         f"User reflection: {reflection}"
     )
 
@@ -154,7 +158,7 @@ def request_online_affirmation(api_url, api_key, model, prompt):
     return data["choices"][0]["message"]["content"].strip()
 
 
-def request_ollama_affirmation(ollama_url, model, prompt):
+def request_ollama_affirmation(ollama_base_url, model, prompt):
     payload = {
         "model": model,
         "prompt": prompt,
@@ -164,6 +168,8 @@ def request_ollama_affirmation(ollama_url, model, prompt):
             "num_predict": 120,
         },
     }
+
+    ollama_url = ollama_base_url.rstrip("/") + "/api/generate"
 
     request = Request(
         ollama_url,
@@ -175,7 +181,12 @@ def request_ollama_affirmation(ollama_url, model, prompt):
     with urlopen(request, timeout=60) as response:
         data = json.loads(response.read().decode("utf-8"))
 
-    return data.get("response", "").strip()
+    response_text = data.get("response", "").strip()
+
+    if not response_text:
+        raise ValueError("Ollama returned an empty response")
+
+    return response_text
 
 
 st.set_page_config(
@@ -275,7 +286,7 @@ if assistant_mode == language["byot_mode"]:
 else:
     ollama_url = st.text_input(
         language["ollama_url_label"],
-        value="http://localhost:11434/api/generate",
+        value="http://localhost:11434",
     )
     ollama_model = st.text_input(language["ollama_model_label"], value="llama3.2")
 
@@ -326,5 +337,12 @@ if st.button(language["generate_button"]):
                 """,
                 unsafe_allow_html=True,
             )
-        except (HTTPError, URLError, TimeoutError, KeyError, json.JSONDecodeError):
+        except (
+            HTTPError,
+            URLError,
+            TimeoutError,
+            KeyError,
+            ValueError,
+            json.JSONDecodeError,
+        ):
             st.error(language["assistant_error"])
