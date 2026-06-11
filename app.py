@@ -3,6 +3,7 @@ import json
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 import streamlit as st
@@ -30,6 +31,8 @@ LANGUAGES = {
         "online_model_label": "Online model",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama model",
+        "ollama_help_text": "New to Ollama?",
+        "ollama_help_link": "Open the quick Ollama setup guide (.txt)",
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
@@ -56,6 +59,8 @@ LANGUAGES = {
         "online_model_label": "ऑनलाइन मॉडल",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama मॉडल",
+        "ollama_help_text": "Ollama पहली बार इस्तेमाल कर रहे हैं?",
+        "ollama_help_link": "त्वरित Ollama सेटअप गाइड खोलें (.txt)",
         "generate_button": "व्यक्तिगत सकारात्मक वाक्य बनाएं",
         "empty_reflection": "कृपया पहले एक छोटा विचार लिखें।",
         "missing_key": "कृपया BYOT मोड के लिए अपनी API कुंजी डालें।",
@@ -82,12 +87,54 @@ LANGUAGES = {
         "online_model_label": "ఆన్లైన్ మోడల్",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama మోడల్",
+        "ollama_help_text": "Ollama కొత్తగా వాడుతున్నారా?",
+        "ollama_help_link": "త్వరిత Ollama సెటప్ గైడ్ తెరవండి (.txt)",
         "generate_button": "వ్యక్తిగత ధైర్య వాక్యం తయారు చేయండి",
         "empty_reflection": "దయచేసి ముందుగా ఒక చిన్న ఆలోచన రాయండి.",
         "missing_key": "దయచేసి BYOT మోడ్ కోసం మీ API కీ ఇవ్వండి.",
         "assistant_error": "AI ఆలోచన సహాయం ప్రస్తుతం అందుబాటులో లేదు, కానీ మీ రోజువారీ ధైర్య వాక్యం మీకోసం ఉంది.",
     },
 }
+
+
+OLLAMA_TUTORIAL_TEXT = """Daily Affirmations - Local Ollama Setup
+
+Use this guide if you want the reflection assistant to run on your own computer.
+
+1. Install Ollama
+   Download Ollama from https://ollama.com/ and finish the installer.
+
+2. Pull a model
+   Open a terminal and run:
+   ollama pull llama3.2
+
+3. Start Ollama
+   Ollama usually starts automatically after installation. If needed, open the
+   Ollama app or run:
+   ollama serve
+
+4. Check the local URL
+   Daily Affirmations uses this default Ollama URL:
+   http://localhost:11434
+
+5. Use it in the app
+   Select "Local Ollama assistant", keep the URL as http://localhost:11434,
+   set the model to llama3.2, write your reflection, and generate.
+
+If it fails, confirm that Ollama is running and that the model name in the app
+matches the model you pulled.
+"""
+
+
+def build_ollama_tutorial_link(link_text):
+    encoded_tutorial = quote(OLLAMA_TUTORIAL_TEXT)
+
+    return (
+        '<a href="data:text/plain;charset=utf-8,'
+        f'{encoded_tutorial}" '
+        'download="ollama_local_ai_setup.txt">'
+        f"{escape(link_text)}</a>"
+    )
 
 
 def load_affirmations(language_code):
@@ -289,6 +336,11 @@ else:
         value="http://localhost:11434",
     )
     ollama_model = st.text_input(language["ollama_model_label"], value="llama3.2")
+    st.markdown(
+        f"{escape(language['ollama_help_text'])} "
+        f"{build_ollama_tutorial_link(language['ollama_help_link'])}",
+        unsafe_allow_html=True,
+    )
 
 if st.button(language["generate_button"]):
     reflection_text = reflection.strip()

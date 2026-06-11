@@ -1,1 +1,3 @@
 streamlit
+# Ollama local AI mode uses the local HTTP API and does not require a Python package.
+# BYOT API keys are entered at runtime in the Streamlit UI.

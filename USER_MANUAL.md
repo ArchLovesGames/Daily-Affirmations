@@ -1,26 +1,82 @@
-### `USER_MANUAL.md`
-
-```md
 # User Manual
 
 ## Daily Affirmations
 
-Daily Affirmations is a simple Streamlit app that displays a random positive affirmation. This was made for a hackathon project.
+Daily Affirmations is a Streamlit app that displays a random positive affirmation. The app supports English, Hindi, and Telugu, and includes an optional AI reflection assistant for personalized affirmations.
 
-## How to Use
+## How to Use the Preset Affirmation
 
 1. Open the app.
-2. View the displayed affirmation.
-3. Refresh the page to see another random affirmation.
+2. Choose a language from the language selector.
+3. Read the homepage text and affirmation in the selected language.
+4. Refresh the page to see another random affirmation.
 
-## Features
+## Language Options
 
-- Random affirmation display from a set of 50 preset affirmations
-- Frontend image
-- Simple Streamlit interface
+The app currently supports:
+
+- English
+- Hindi
+- Telugu
+
+Changing the language updates the page text and the preset affirmation source.
+
+## How to Use the AI Reflection Assistant
+
+The AI assistant appears below the preset affirmation. It is optional, so the main affirmation feature works even if no AI service is connected.
+
+1. Write a short reflection in the text box, such as how you feel today or what is on your mind.
+2. Choose an assistant mode.
+3. Enter the required connection details for that mode.
+4. Click the generate button.
+5. Read the personalized affirmation shown below the button.
+
+The assistant considers both the selected app language and the language used in the reflection. It will usually respond in the selected language unless the reflection is clearly written in another supported language.
+
+## BYOT Online Assistant Mode
+
+Use BYOT mode when you want to connect an online AI provider with your own token.
+
+1. Select `BYOT online assistant`.
+2. Enter your API key in the password field.
+3. Keep or edit the API URL.
+4. Keep or edit the model name.
+5. Generate the personalized affirmation.
+
+The key is only used for the request and is not saved by the app.
+
+## Local Ollama Assistant Mode
+
+Use local mode when you want the assistant to run through Ollama on your machine.
+
+1. Install Ollama.
+2. Pull a model, for example:
+
+```bash
+ollama pull llama3.2
+```
+
+3. Confirm Ollama is running at:
+
+```text
+http://localhost:11434
+```
+
+4. Select `Local Ollama assistant` in the app.
+5. Enter the model name, such as `llama3.2`.
+6. Generate the personalized affirmation.
+
+If Ollama is not running or the model is not available, the app shows an error message and the normal affirmation feature remains usable.
+
+## What the AI Assistant Is For
+
+The assistant is designed to create short, positive, personalized affirmations. It is not a replacement for professional support and should not be used for medical, legal, crisis, political, or religious advice.
 
 ## Files Used
 
 - `app.py` contains the app code.
-- `data/affirmations.txt` contains the affirmations.
-- `assets/thumbs_up.jpg` contains the frontend image.
+- `data/affirmations_en.txt` contains English affirmations.
+- `data/affirmations_hi.txt` contains Hindi affirmations.
+- `data/affirmations_te.txt` contains Telugu affirmations.
+- `assets/thumbs_up.jpeg` contains the frontend image.
+- `.env.example` contains safe placeholder examples for optional AI configuration.
