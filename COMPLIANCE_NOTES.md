@@ -4,7 +4,6 @@ This is a beginner-level Streamlit project created for learning and hackathon pr
 
 ## Included
 
-- AGPLv3 license
 - README
 - Contributing guide
 - User manual
@@ -13,7 +12,7 @@ This is a beginner-level Streamlit project created for learning and hackathon pr
 - Changelog
 - Environment example
 - Docker readiness files
-- Spec Kit documentation
+- Basic GitLab CI checks
 
 ## Not Included
 
@@ -23,32 +22,23 @@ Not included because the app does not use API keys, passwords, tokens, databases
 
 ### Dependency Audit
 
-Not included because the app has only one dependency: Streamlit. This can be added later using `pip-audit`.
+Not included by default. It can be added later using `pip-audit`.
 
 ### Test Framework
 
-Not included because the current app has minimal UI logic and no separate business logic functions. Manual testing is documented in the README.
+Not included because the app is intentionally small and mostly UI-driven. Manual testing is documented in the README.
 
 ### Coverage Reporting
 
 Not included because no automated test suite exists yet.
 
-### GitLab CI Pipeline
+## Data Note
 
-Not included because the app is deployed through Streamlit Cloud and does not currently require a CI/CD pipeline.
-
-### Pre-commit Hooks
-
-Not included to keep the beginner setup simple. This can be added later for formatting and linting.
-
-### Automated Changelog
-
-Not included because the project currently has a manually maintained `CHANGELOG.md`.
+The app includes sample finance data for demonstration. It is not real personal financial data.
 
 ## Future Improvements
 
 - Add basic Python tests.
-- Add GitLab CI.
-- Add `pip-audit`.
-- Add pre-commit hooks.
-- Add automated changelog generation.
+- Add dependency auditing.
+- Add persistent storage.
+- Add custom budget management.

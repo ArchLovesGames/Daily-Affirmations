@@ -1,0 +1,25 @@
+date,type,category,note,amount
+2026-01-01,Income,Salary,Monthly salary,65000
+2026-01-03,Expense,Food,Groceries,3200
+2026-01-05,Expense,Transport,Metro card recharge,1200
+2026-01-08,Expense,Bills,Electricity bill,2800
+2026-01-12,Expense,Shopping,Winter clothes,4500
+2026-01-16,Expense,Entertainment,Movie night,1400
+2026-01-20,Expense,Health,Medicine,900
+2026-01-25,Income,Freelance,Logo design work,12000
+2026-02-01,Income,Salary,Monthly salary,65000
+2026-02-02,Expense,Rent,Room rent,18000
+2026-02-04,Expense,Food,Groceries,4100
+2026-02-06,Expense,Transport,Cab rides,2100
+2026-02-10,Expense,Bills,Phone and internet,1800
+2026-02-13,Expense,Education,Online course,2500
+2026-02-18,Expense,Entertainment,Cafe with friends,1600
+2026-02-23,Income,Other,Cashback and rewards,900
+2026-03-01,Income,Salary,Monthly salary,65000
+2026-03-03,Expense,Food,Groceries,3900
+2026-03-07,Expense,Transport,Fuel,2600
+2026-03-11,Expense,Bills,Water and utilities,2300
+2026-03-14,Expense,Shopping,Shoes,5200
+2026-03-18,Expense,Health,Doctor visit,1800
+2026-03-21,Expense,Education,Books,1200
+2026-03-28,Income,Freelance,Website fixes,8500

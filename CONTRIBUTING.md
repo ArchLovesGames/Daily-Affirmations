@@ -1,8 +1,8 @@
 # Contributing
 
-Thank you for contributing to Daily Affirmations. While this is a hackathon project, contributions are welcome
+Thank you for contributing to Pocket Finance Tracker. This is a beginner-level Streamlit project, so small and clear improvements are welcome.
 
-## How to Contribute
+## How To Contribute
 
 1. Fork or clone the repository.
 2. Create a new branch.
@@ -12,4 +12,11 @@ Thank you for contributing to Daily Affirmations. While this is a hackathon proj
 
 ## Local Testing
 
-Please refer to README.md for the local run testing
+Run:
+
+```bash
+python -m py_compile app.py
+streamlit run app.py
+```
+
+Please update `README.md` or `USER_MANUAL.md` when changing app behavior.

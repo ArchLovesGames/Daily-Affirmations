@@ -1,19 +1,21 @@
-# Code of Conduct
+# Code Of Conduct
 
-## Our Standards
+## Our Pledge
 
-This is a hackathon project but is open to all to contributors. Contributors should:
+We want this project to be welcoming for learners and contributors.
+
+## Expected Behavior
 
 - Be respectful.
-- Use inclusive language.
-- Give constructive feedback.
-- Avoid harassment or personal attacks.
-- Avoid demeaning the project creator
+- Give helpful feedback.
+- Keep discussions focused on improving the project.
 
-## Scope
+## Unacceptable Behavior
 
-This applies to repository discussions, issues, pull requests, and project communication.
+- Harassment or discrimination.
+- Personal attacks.
+- Sharing private financial information without consent.
 
 ## Enforcement
 
-Unacceptable behavior may result in comments, issues, or contributions being removed.
+Project maintainers may remove comments, issues, or contributions that violate this code of conduct.
