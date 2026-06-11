@@ -23,6 +23,10 @@
 [Direct translation from one language to another is NOT localisation. Instead, if quotes are needed, import from open source]
 <!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
+### [Don't touch compliance until prompted]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[Your task should be restricted to the segments of code which affect the functionality of the application. Compliance checks, such as README.md updates, linting and fomrating etc is to be done by human]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
