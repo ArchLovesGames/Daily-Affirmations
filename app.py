@@ -1,5 +1,6 @@
 import random
 import json
+import os
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -32,6 +33,7 @@ LANGUAGES = {
             "Create or copy an API key from your AI provider account.",
             "Paste the key into the password field. It is used only for this request and is not saved.",
             "Keep the default API URL for OpenAI-compatible providers, or paste your provider's chat completions endpoint.",
+            "Sarvam Chat Completion is also supported as an online provider. Use API URL `https://api.sarvam.ai/v1/chat/completions` and model `sarvam-30b`.",
             "Set the model name that your provider supports, then generate your affirmation.",
         ],
         "api_url_label": "API URL",
@@ -67,128 +69,149 @@ LANGUAGES = {
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
+        "translation_caption": "Local-language reflections use Sarvam AI translation when enhanced translation is configured.",
+        "ollama_translation_caption": "Ollama generates the affirmation locally. Hindi and Telugu translation use the online Sarvam API when enabled; English mode remains fully local.",
+        "sarvam_key_warning": "Enhanced local-language translation is unavailable because SARVAM_API_KEY is not configured. Falling back to direct AI generation.",
+        "sarvam_failure_warning": "Enhanced translation is unavailable right now. Showing the AI response without translation.",
         "assistant_error": "AI reflection is unavailable right now, but your daily affirmation is still here for you.",
     },
     "हिन्दी": {
         "code": "hi",
-        "title": "दैनिक सकारात्मक वाक्य ✨",
-        "subtitle": "एक छोटा सा स्मरण कि आप ठीक कर रहे हैं।",
-        "selector": "अपनी भाषा चुनें",
-        "image_warning": "चित्र नहीं मिला। कृपया assets/thumbs_up.jpeg जांचें।",
-        "missing_data": "इस भाषा के लिए सकारात्मक वाक्य अभी उपलब्ध नहीं हैं।",
-        "empty_data": "इस भाषा के लिए अभी कोई सकारात्मक वाक्य नहीं मिला।",
-        "reflection_heading": "AI के साथ मन की बात",
-        "reflection_intro": "एक छोटा विचार लिखें और अपने लिए एक सकारात्मक वाक्य पाएं।",
+        "title": "रोज़ाना Affirmations ✨",
+        "subtitle": "एक छोटी सी याद दिलाना कि आप ठीक कर रहे हैं।",
+        "selector": "अपनी भाषा चुनिए",
+        "image_warning": "Image नहीं मिली। ज़रा assets/thumbs_up.jpeg देख लीजिए",
+        "missing_data": "इस language के लिए अभी Affirmations नहीं हैं।",
+        "empty_data": "अभी तक इस language के लिए कोई affirmations नहीं मिले हैं।",
+        "reflection_heading": "AI के साथ सोचिए",
+        "reflection_intro": "एक छोटा सा विचार लिखिए, फिर आपको एक personal affirmation मिलेगा।",
         "reflection_label": "आज आप कैसा महसूस कर रहे हैं?",
-        "reflection_placeholder": "मुझे अपने प्रोजेक्ट डेमो को लेकर घबराहट हो रही है।",
-        "assistant_mode": "सहायक मोड",
-        "byot_mode": "BYOT ऑनलाइन सहायक",
-        "ollama_mode": "स्थानीय Ollama सहायक",
-        "api_key_label": "API कुंजी",
-        "api_key_help": "आपकी कुंजी केवल इस अनुरोध के लिए उपयोग होगी।",
-        "api_key_help_title": "API कुंजी कैसे जोड़ें",
+        "reflection_placeholder": "मुझे अपने project demo को लेकर घबराहट हो रही है।",
+        "assistant_mode": "Assistant mode",
+        "byot_mode": "BYOT online assistant",
+        "ollama_mode": "Local Ollama assistant",
+        "api_key_label": "API key",
+        "api_key_help": "आपकी key सिर्फ़ इसी request के लिए इस्तेमाल होगी।",
+        "api_key_help_title": "API key कैसे लगाएँ",
         "api_key_steps": [
-            "BYOT ऑनलाइन सहायक चुनें।",
-            "अपने AI सेवा खाते से API कुंजी बनाएं या कॉपी करें।",
-            "कुंजी को पासवर्ड वाले बॉक्स में डालें। यह केवल इसी अनुरोध के लिए उपयोग होगी और सहेजी नहीं जाएगी।",
-            "OpenAI-संगत सेवाओं के लिए डिफॉल्ट API URL रखें, या अपनी सेवा का chat completions endpoint डालें।",
-            "अपनी सेवा द्वारा समर्थित मॉडल नाम लिखें, फिर अपना सकारात्मक वाक्य बनाएं।",
+            "BYOT online assistant चुनिए।",
+            "अपने AI provider account से API key बनाइए या copy कीजिए।",
+            "Password field में key डाल दीजिए। यह सिर्फ़ इसी request के लिए है और save नहीं किया जाएगा।",
+            "OpenAI-compatible providers के लिए default API URL रखें, या अपने provider का chat completions endpoint paste कर दीजिए।",
+            "Sarvam Chat Completion online भी support करता है। API URL `https://api.sarvam.ai/v1/chat/completions` और model `sarvam-30b` इस्तेमाल कीजिए।",
+            "अपने provider के support वाले model का नाम set कीजिए, फिर अपना affirmation generate कीजिए।",
         ],
         "api_url_label": "API URL",
-        "online_model_label": "ऑनलाइन मॉडल",
+        "online_model_label": "Online model",
         "ollama_url_label": "Ollama URL",
-        "ollama_model_label": "Ollama मॉडल",
-        "ollama_help_text": "Ollama पहली बार इस्तेमाल कर रहे हैं?",
-        "ollama_setup_title": "त्वरित Ollama सेटअप",
+        "ollama_model_label": "Ollama model",
+        "ollama_help_text": "क्या आप Ollama में नए हैं?",
+        "ollama_setup_title": "Quick Ollama setup कीजिए",
         "ollama_setup_steps": [
-            "`https://ollama.com/` से Ollama इंस्टॉल करें।",
-            "टर्मिनल में मॉडल खींचें: `ollama pull llama3.2`।",
-            "Ollama ऐप खोलें या `ollama serve` चलाकर Ollama शुरू करें।",
-            "अगर आपने अलग होस्ट कॉन्फिगर नहीं किया है, तो इस ऐप में `http://localhost:11434` इस्तेमाल करें।",
-            "मॉडल में `llama3.2` लिखें, अपना विचार लिखें, और सकारात्मक वाक्य बनाएं।",
+            "`https://ollama.com/` से Ollama install कीजिए।",
+            "अपने terminal में model `ollama pull llama3.2` निकाल लीजिए।",
+            "आप app खोलकर या `ollama serve` run करके Ollama शुरू कर सकते हैं।",
+            "इस app में `http://localhost:11434` इस्तेमाल कीजिए, जब तक कि आपने कोई दूसरा host ना set किया हो।",
+            "model को `llama3.2` पर set कीजिए, अपना reflection लिखिए, और generate कीजिए।",
         ],
-        "ollama_url_help_title": "अगर localhost आपके Ollama URL से match नहीं करता",
+        "ollama_url_help_title": "अगर localhost आपके Ollama URL से match नहीं करता है",
         "ollama_url_steps": [
-            "टर्मिनल में कॉन्फिगर किया गया होस्ट देखें: macOS/Linux पर `echo $OLLAMA_HOST` या Windows PowerShell में `$env:OLLAMA_HOST`।",
-            "अगर Ollama अलग होस्ट दिखाता है, तो पूरा URL यहां डालें, जैसे `http://192.168.1.20:11434`।",
-            "URL को `/api/tags` से जांचें, जैसे `curl http://localhost:11434/api/tags`।",
-            "मॉडल उसी कॉन्फिगर किए गए होस्ट पर खींचें: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`।",
-            "इस ऐप में वही URL और मॉडल नाम इस्तेमाल करें।",
+            "किसी terminal में configured host check कीजिए: `echo $OLLAMA_HOST` on macOS/Linux या `$env:OLLAMA_HOST` in Windows PowerShell.",
+            "अगर Ollama कोई custom host दिखाता है, तो उसे यहाँ पूरी तरह से URL की तरह, जैसे `http://192.168.1.20:11434`, paste कर दीजिए।",
+            "ज़रा URL को `/api/tags` के साथ test कीजिए, जैसे कि `curl http://localhost:11434/api/tags`.",
+            "उसी configured host: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2` पर model को खींच लीजिए।",
+            "इस app में वही URL और model name इस्तेमाल कीजिए।",
         ],
-        "cloudflare_help_title": "वेब ऐप के साथ स्थानीय Ollama इस्तेमाल करें",
+        "cloudflare_help_title": "web app के साथ local Ollama इस्तेमाल कर रहे हैं",
         "cloudflare_steps": [
-            "अपने कंप्यूटर पर चल रहे Ollama को इस वेब ऐप से जोड़ने के लिए Ollama शुरू करें: `ollama serve`।",
-            "दूसरा टर्मिनल खोलें और जरूरत हो तो Cloudflare Tunnel इंस्टॉल करें: `brew install cloudflared`।",
-            "चलाएं: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`।",
-            "`.trycloudflare.com` पर खत्म होने वाला generated URL कॉपी करें।",
-            "उस पूरे URL को Ollama URL field में paste करें और terminal खुला रखें।",
-            "यह URL temporary है और tunnel restart होने पर बदल जाता है। इसे सिर्फ testing या demos के लिए इस्तेमाल करें। URL को publicly share न करें।",
+            "अपने computer पर चलने वाले Ollama को इस web app से connect करने के लिए, Ollama: `ollama serve` से शुरू कीजिए।",
+            "दूसरा terminal खोलिए और ज़रूरत पड़ने पर Cloudflare Tunnel install कर लीजिए: `brew install cloudflared`.",
+            "चलाएँ: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
+            "`.trycloudflare.com` में ख़त्म होने वाला URL copy कर लीजिए।",
+            "उस full URL को Ollama URL field में paste कर दीजिए और terminal खुला रखिए।",
+            "यह URL temporary है और tunnel restart होने पर बदल जाएगा। इसे सिर्फ़ testing या demo के लिए इस्तेमाल कीजिए। URL को public में share मत कीजिए।",
         ],
-        "generate_button": "व्यक्तिगत सकारात्मक वाक्य बनाएं",
-        "empty_reflection": "कृपया पहले एक छोटा विचार लिखें।",
-        "missing_key": "कृपया BYOT मोड के लिए अपनी API कुंजी डालें।",
-        "assistant_error": "AI मनन अभी उपलब्ध नहीं है, लेकिन आपका दैनिक सकारात्मक वाक्य अभी भी आपके साथ है।",
+        "generate_button": "अपने लिए एक affirmation बनाइए",
+        "empty_reflection": "पहले एक छोटा सा reflection लिखिए।",
+        "missing_key": "ज़रा BYOT mode के लिए अपनी API key डालिए।",
+        "translation_caption": "जब enhanced translation चालू होता है, तो Local-language reflections में Sarvam AI translation इस्तेमाल होता है।",
+        "ollama_translation_caption": "Ollama locally affirmation generate करता है। जब online Sarvam API चालू होता है, तो Hindi और Telugu translation के लिए इसका इस्तेमाल होता है; English mode पूरी तरह से local ही रहता है।",
+        "sarvam_key_warning": "SARVAM_API_KEY configure नहीं किया गया है, इसलिए enhanced local-language translation नहीं हो सकता। वापस direct AI generation पर आ रही हूँ।",
+        "sarvam_failure_warning": "अभी Enhanced Translation नहीं चल रहा है। बिना translation के AI response दिखा रहा हूँ।",
+        "assistant_error": "AI reflection अभी available नहीं है, लेकिन आपकी daily affirmation आपके लिए अभी भी मौजूद है।",
     },
     "తెలుగు": {
         "code": "te",
-        "title": "రోజువారీ ధైర్య వాక్యాలు ✨",
-        "subtitle": "మీరు బాగానే ముందుకు సాగుతున్నారని ఒక చిన్న గుర్తు.",
-        "selector": "మీ భాషను ఎంచుకోండి",
-        "image_warning": "చిత్రం దొరకలేదు. దయచేసి assets/thumbs_up.jpeg చూడండి.",
-        "missing_data": "ఈ భాషకు ధైర్య వాక్యాలు ఇంకా అందుబాటులో లేవు.",
-        "empty_data": "ఈ భాషకు ఇంకా ధైర్య వాక్యాలు లేవు.",
-        "reflection_heading": "AI తో ఆలోచన పంచుకోండి",
-        "reflection_intro": "ఒక చిన్న ఆలోచన రాసి, మీకోసం ఒక వ్యక్తిగత ధైర్య వాక్యం పొందండి.",
-        "reflection_label": "ఈ రోజు మీకు ఎలా అనిపిస్తోంది?",
-        "reflection_placeholder": "నా ప్రాజెక్ట్ డెమో గురించి నాకు కొంచెం ఆందోళనగా ఉంది.",
-        "assistant_mode": "సహాయక మోడ్",
-        "byot_mode": "BYOT ఆన్లైన్ సహాయకుడు",
-        "ollama_mode": "లోకల్ Ollama సహాయకుడు",
-        "api_key_label": "API కీ",
-        "api_key_help": "మీ కీ ఈ అభ్యర్థనకే ఉపయోగించబడుతుంది.",
-        "api_key_help_title": "API కీని ఎలా జోడించాలి",
+        "title": "రోజువారీ ధృవీకరణలు ✨",
+        "subtitle": "మీరు బాగానే ఉన్నారని గుర్తు చేస్తున్నాను.",
+        "selector": "మీ language ఎంచుకోండి",
+        "image_warning": "Image దొరకలేదు. assets/thumbs_up.jpeg చూడండి",
+        "missing_data": "ఈ language-కి ఇంకా affirmations లేవు.",
+        "empty_data": "ఈ language-కి ఇంకా affirmations దొరకలేదు.",
+        "reflection_heading": "AI-తో reflect చేయండి",
+        "reflection_intro": "ఒక చిన్న ఆలోచనాత్మకమైన మాట రాయండి, తర్వాత మీకు ఒక personal affirmation వస్తుంది.",
+        "reflection_label": "ఈరోజు మీరు ఎలా ఉన్నారు?",
+        "reflection_placeholder": "నా project demo గురించి నాకు చాలా భయంగా ఉంది.",
+        "assistant_mode": "Assistant mode",
+        "byot_mode": "BYOT online assistant",
+        "ollama_mode": "Local Ollama assistant",
+        "api_key_label": "API key",
+        "api_key_help": "ఈ request కోసం మాత్రమే మీ key వాడతారు.",
+        "api_key_help_title": "API key ఎలా add చేయాలో చెప్పండి",
         "api_key_steps": [
-            "BYOT ఆన్లైన్ సహాయకుడిని ఎంచుకోండి.",
-            "మీ AI సేవ ఖాతా నుండి API కీని సృష్టించండి లేదా కాపీ చేయండి.",
-            "ఆ కీని పాస్‌వర్డ్ పెట్టెలో అతికించండి. ఇది ఈ అభ్యర్థనకే వాడబడుతుంది, భద్రపరచబడదు.",
-            "OpenAI-సరిపోలే సేవలకు డిఫాల్ట్ API URL ఉంచండి, లేదా మీ సేవ యొక్క chat completions endpoint ఇవ్వండి.",
-            "మీ సేవలో అందుబాటులో ఉన్న మోడల్ పేరును రాయండి, తర్వాత మీ ధైర్య వాక్యాన్ని తయారు చేయండి.",
+            "BYOT online assistant-ని ఎంచుకోండి.",
+            "మీ AI provider account నుండి API key-ని create చేయండి లేదా copy చేయండి.",
+            "Password field-లో key paste చేయండి. ఇది ఈ request-కి మాత్రమే వాడతారు. save చేయరు.",
+            "OpenAI-compatible providers కోసం default API URL-నే ఉంచండి లేదా మీ provider chat completions endpoint paste చేయండి.",
+            "Sarvam Chat Completion online provider-గా కూడా support చేస్తుంది. API URL `https://api.sarvam.ai/v1/chat/completions` మరియు model `sarvam-30b` వాడండి.",
+            "మీ provider support చేసే model name set చేసి, మీ affirmation generate చేయండి.",
         ],
         "api_url_label": "API URL",
-        "online_model_label": "ఆన్లైన్ మోడల్",
+        "online_model_label": "Online model",
         "ollama_url_label": "Ollama URL",
-        "ollama_model_label": "Ollama మోడల్",
-        "ollama_help_text": "Ollama కొత్తగా వాడుతున్నారా?",
-        "ollama_setup_title": "త్వరిత Ollama సెటప్",
+        "ollama_model_label": "Ollama model",
+        "ollama_help_text": "Ollama-కి కొత్తరా?",
+        "ollama_setup_title": "Quick Ollama setup చేసుకోండి",
         "ollama_setup_steps": [
-            "`https://ollama.com/` నుండి Ollama ఇన్‌స్టాల్ చేయండి.",
-            "టెర్మినల్‌లో మోడల్‌ను పొందండి: `ollama pull llama3.2`.",
-            "Ollama యాప్ తెరవండి లేదా `ollama serve` నడిపి Ollama ప్రారంభించండి.",
-            "మీరు వేరే హోస్ట్ అమర్చకపోతే, ఈ యాప్‌లో `http://localhost:11434` వాడండి.",
-            "మోడల్‌గా `llama3.2` ఇవ్వండి, మీ ఆలోచన రాయండి, తర్వాత ధైర్య వాక్యాన్ని తయారు చేయండి.",
+            "`https://ollama.com/` నుంచి Ollama install చేయండి.",
+            "మీ terminal-లో `ollama pull llama3.2` అనే model-ని pull చేయండి.",
+            "Ollama app open చేయండి లేదా `ollama serve` run చేయండి.",
+            "మీరు వేరే host configure చేయకపోతే ఈ app-లో `http://localhost:11434` వాడండి.",
+            "`llama3.2`-కి model set చేసి, మీ reflection రాసి, generate చేయండి.",
         ],
-        "ollama_url_help_title": "localhost మీ Ollama URL తో match కాకపోతే",
+        "ollama_url_help_title": "localhost మీ Ollama URL-తో match కాకపోతే",
         "ollama_url_steps": [
-            "టెర్మినల్‌లో అమర్చిన హోస్ట్‌ను చూడండి: macOS/Linux లో `echo $OLLAMA_HOST`, Windows PowerShell లో `$env:OLLAMA_HOST`.",
-            "Ollama వేరే హోస్ట్ చూపిస్తే, పూర్తి URL ను ఇక్కడ ఇవ్వండి, ఉదాహరణకు `http://192.168.1.20:11434`.",
-            "URL ను `/api/tags` తో పరీక్షించండి, ఉదాహరణకు `curl http://localhost:11434/api/tags`.",
-            "మోడల్‌ను అదే అమర్చిన హోస్ట్‌పై పొందండి: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`.",
-            "ఈ యాప్‌లో అదే URL మరియు మోడల్ పేరును వాడండి.",
+            "Configured host-ని terminal-లో check చేయండి: `echo $OLLAMA_HOST` on macOS/Linux లేదా Windows PowerShell-లో `$env:OLLAMA_HOST`.",
+            "Ollama custom host చూపిస్తే, దాన్ని ఇక్కడ full URL లాగా paste చేయండి. ఉదాహరణకి `http://192.168.1.20:11434`.",
+            "ఉదాహరణకి `curl http://localhost:11434/api/tags` లాంటి `/api/tags`-తో URL test చేయండి.",
+            "అదే configured host: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2` పైన model-ని pull చేయండి.",
+            "ఈ app-లో URL, model name అలాగే వాడండి.",
         ],
-        "cloudflare_help_title": "వెబ్ యాప్‌తో లోకల్ Ollama ఉపయోగించడం",
+        "cloudflare_help_title": "web app-తో local Ollama-ని వాడటం",
         "cloudflare_steps": [
-            "మీ కంప్యూటర్‌లో నడుస్తున్న Ollama ను ఈ వెబ్ యాప్‌కు connect చేయడానికి Ollama ప్రారంభించండి: `ollama serve`.",
-            "రెండో terminal తెరిచి, అవసరమైతే Cloudflare Tunnel ఇన్‌స్టాల్ చేయండి: `brew install cloudflared`.",
-            "ఇది నడపండి: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
-            "`.trycloudflare.com` తో ముగిసే generated URL ను copy చేయండి.",
-            "ఆ పూర్తి URL ను Ollama URL field లో paste చేసి terminal తెరిచి ఉంచండి.",
-            "ఈ URL temporary. tunnel restart అయినప్పుడల్లా ఇది మారుతుంది. testing లేదా demos కోసం మాత్రమే ఉపయోగించండి. URL ను publicly share చేయవద్దు.",
+            "మీ computer-లో run అవుతున్న Ollama-ని ఈ web app-కి connect చేయడానికి, Ollama: `ollama serve` start చేయండి.",
+            "అవసరమైతే రెండవ terminal open చేసి Cloudflare Tunnel install చేయండి: `brew install cloudflared`.",
+            "Run: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
+            "`.trycloudflare.com`-తో అంతమయ్యే URL-ని copy చేయండి.",
+            "ఆ full URL-ని Ollama URL field-లో paste చేసి, terminal open-లో ఉంచండి.",
+            "ఈ URL temporary-ది. Tunnel restart అయినప్పుడల్లా మారుతుంది. దీన్ని testing-కి, demos-కి మాత్రమే వాడండి. URL-ని public-గా share చేయకండి.",
         ],
-        "generate_button": "వ్యక్తిగత ధైర్య వాక్యం తయారు చేయండి",
-        "empty_reflection": "దయచేసి ముందుగా ఒక చిన్న ఆలోచన రాయండి.",
-        "missing_key": "దయచేసి BYOT మోడ్ కోసం మీ API కీ ఇవ్వండి.",
-        "assistant_error": "AI ఆలోచన సహాయం ప్రస్తుతం అందుబాటులో లేదు, కానీ మీ రోజువారీ ధైర్య వాక్యం మీకోసం ఉంది.",
+        "generate_button": "మీ గురించి మీకు నచ్చినవి చెప్పుకోండి",
+        "empty_reflection": "ముందుగా ఒక చిన్న reflection రాయండి.",
+        "missing_key": "BYOT mode-కి మీ API key enter చేయండి.",
+        "translation_caption": "Enhanced translation configure చేసినప్పుడు, Local-language reflections-లో Sarvam AI translation వాడతారు.",
+        "ollama_translation_caption": "Ollama affirmation-ని local-గా generate చేస్తుంది. Hindi, Telugu translation-కి online Sarvam API enable చేస్తే వాడతారు. English mode మాత్రం పూర్తిగా local-లోనే ఉంటుంది.",
+        "sarvam_key_warning": "SARVAM_API_KEY configure కాలేదు కాబట్టి enhanced local-language translation లేదు. direct AI generation-కి తిరిగి వెళ్తున్నాను.",
+        "sarvam_failure_warning": "ఇప్పుడు Enhanced Translation లేదు. Translation లేకుండా AI response చూపిస్తున్నాను.",
+        "assistant_error": "AI reflection ఇప్పుడు available లేదు. కానీ మీ daily affirmation మాత్రం ఇంకా ఉంది.",
     },
+}
+
+
+SARVAM_LANGUAGE_CODES = {
+    "English": "en-IN",
+    "हिन्दी": "hi-IN",
+    "తెలుగు": "te-IN",
 }
 
 
@@ -223,25 +246,94 @@ def load_affirmations(language_code):
     return cleaned_affirmations
 
 
+def get_sarvam_api_key():
+    api_key = os.environ.get("SARVAM_API_KEY", "").strip()
+
+    if api_key:
+        return api_key
+
+    try:
+        return st.secrets.get("SARVAM_API_KEY", "").strip()
+    except Exception:
+        return ""
+
+
+def translate_with_sarvam(
+    text,
+    target_language_code,
+    source_language_code="auto",
+):
+    api_key = get_sarvam_api_key()
+
+    if not api_key:
+        raise ValueError("SARVAM_API_KEY is not configured")
+
+    payload = {
+        "input": text,
+        "source_language_code": source_language_code,
+        "target_language_code": target_language_code,
+        "model": "mayura:v1",
+        "mode": "classic-colloquial",
+    }
+
+    request = Request(
+        "https://api.sarvam.ai/translate",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "api-subscription-key": api_key,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 DailyAffirmationsApp/1.0",
+        },
+        method="POST",
+    )
+
+    try:
+        with urlopen(request, timeout=20) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except HTTPError as error:
+        raise ValueError(f"Sarvam translation failed with status {error.code}") from error
+    except URLError as error:
+        raise ValueError("Could not reach Sarvam translation service") from error
+    except TimeoutError as error:
+        raise ValueError("Sarvam translation timed out") from error
+    except json.JSONDecodeError as error:
+        raise ValueError("Sarvam translation returned an invalid response") from error
+
+    translated_text = data.get("translated_text", "").strip()
+
+    if not translated_text:
+        raise ValueError("Sarvam translation returned a blank response")
+
+    return translated_text
+
+
 def build_reflection_prompt(
     reflection,
-    selected_language_name,
-    selected_language_code,
+    response_language_name="English",
 ):
+    language_instruction = (
+        "Answer in clear, natural English before any optional translation."
+    )
+
+    if response_language_name != "English":
+        language_instruction = (
+            f"Respond in {response_language_name} because enhanced translation "
+            "is unavailable."
+        )
+
     return (
         "You are a friendly daily reflection assistant inside a Daily "
         "Affirmations app. "
-        "Respond naturally and briefly. "
-        f"Prefer the selected app language: {selected_language_name} "
-        f"({selected_language_code}). "
-        "Only switch languages if the user clearly writes in another "
-        "supported language. "
+        f"{language_instruction} "
+        "Keep your response grounded, simple, and brief. "
 
         "First decide whether the user's message contains an actual "
         "reflection, emotion, concern, or personal thought. "
 
-        "If it does, write one warm and practical personalised affirmation "
+        "If it does, write one warm and practical personalized affirmation "
         "based only on what the user actually said. "
+        "Avoid flowery, theatrical, or overly poetic language. "
         "Do not invent emotions, struggles, or hidden meanings. "
         "Do not write the word 'Affirmation:' before the response. "
 
@@ -261,6 +353,70 @@ def build_reflection_prompt(
     )
 
 
+def generate_personal_affirmation(
+    assistant_mode,
+    language_name,
+    language,
+    reflection_text,
+    api_url=None,
+    api_key=None,
+    model=None,
+    ollama_url=None,
+    ollama_model=None,
+):
+    def request_ai(prompt):
+        if assistant_mode == language["byot_mode"]:
+            return request_online_affirmation(
+                api_url.strip(),
+                api_key.strip(),
+                model.strip(),
+                prompt,
+            )
+
+        return request_ollama_affirmation(
+            ollama_url.strip(),
+            ollama_model.strip(),
+            prompt,
+        )
+
+    if language_name == "English":
+        prompt = build_reflection_prompt(reflection_text)
+        return request_ai(prompt)
+
+    sarvam_api_key = get_sarvam_api_key()
+
+    if not sarvam_api_key:
+        st.warning(language["sarvam_key_warning"])
+        prompt = build_reflection_prompt(reflection_text, language_name)
+        return request_ai(prompt)
+
+    target_language_code = SARVAM_LANGUAGE_CODES[language_name]
+
+    try:
+        english_reflection = translate_with_sarvam(
+            reflection_text,
+            "en-IN",
+            source_language_code="auto",
+        )
+    except ValueError:
+        st.warning(language["sarvam_failure_warning"])
+        prompt = build_reflection_prompt(reflection_text, language_name)
+        return request_ai(prompt)
+
+    prompt = build_reflection_prompt(english_reflection)
+    english_affirmation = request_ai(prompt)
+
+    try:
+        return translate_with_sarvam(
+            english_affirmation,
+            target_language_code,
+            source_language_code="en-IN",
+        )
+    except ValueError:
+        st.warning(language["sarvam_failure_warning"])
+        return english_affirmation
+
+
 def request_online_affirmation(api_url, api_key, model, prompt):
     payload = {
         "model": model,
@@ -271,7 +427,7 @@ def request_online_affirmation(api_url, api_key, model, prompt):
             },
             {"role": "user", "content": prompt},
         ],
-        "temperature": 0.7,
+        "temperature": 0.3,
         "max_tokens": 120,
     }
 
@@ -299,7 +455,7 @@ def request_ollama_affirmation(ollama_base_url, model, prompt):
         "prompt": prompt,
         "stream": False,
         "options": {
-            "temperature": 0.7,
+            "temperature": 0.3,
             "num_predict": 120,
         },
     }
@@ -407,6 +563,12 @@ assistant_mode = st.radio(
     horizontal=True,
 )
 
+if language_name != "English":
+    if assistant_mode == language["ollama_mode"]:
+        st.caption(language["ollama_translation_caption"])
+    else:
+        st.caption(language["translation_caption"])
+
 if assistant_mode == language["byot_mode"]:
     api_key = st.text_input(
         language["api_key_label"],
@@ -437,27 +599,19 @@ if st.button(language["generate_button"]):
     elif assistant_mode == language["byot_mode"] and not api_key.strip():
         st.warning(language["missing_key"])
     else:
-        prompt = build_reflection_prompt(
-            reflection_text,
-            language_name,
-            language["code"],
-        )
-
         try:
             with st.spinner(language["reflection_heading"]):
-                if assistant_mode == language["byot_mode"]:
-                    personal_affirmation = request_online_affirmation(
-                        api_url.strip(),
-                        api_key.strip(),
-                        model.strip(),
-                        prompt,
-                    )
-                else:
-                    personal_affirmation = request_ollama_affirmation(
-                        ollama_url.strip(),
-                        ollama_model.strip(),
-                        prompt,
-                    )
+                personal_affirmation = generate_personal_affirmation(
+                    assistant_mode,
+                    language_name,
+                    language,
+                    reflection_text,
+                    api_url=api_url if assistant_mode == language["byot_mode"] else None,
+                    api_key=api_key if assistant_mode == language["byot_mode"] else None,
+                    model=model if assistant_mode == language["byot_mode"] else None,
+                    ollama_url=ollama_url if assistant_mode == language["ollama_mode"] else None,
+                    ollama_model=ollama_model if assistant_mode == language["ollama_mode"] else None,
+                )
 
             st.markdown(
                 f"""
