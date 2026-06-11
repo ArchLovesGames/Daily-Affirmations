@@ -366,9 +366,9 @@ if assistant_mode == language["byot_mode"]:
     )
     api_url = st.text_input(
         language["api_url_label"],
-        value="https://api.openai.com/v1/chat/completions",
+        value="https://api.groq.com/openai/v1/chat/completions",
     )
-    model = st.text_input(language["online_model_label"], value="gpt-4o-mini")
+    model = st.text_input(language["online_model_label"], value="llama-3.3-70b-versatile")
     show_help_popup(language["api_key_help_title"], language["api_key_steps"])
 else:
     ollama_url = st.text_input(
@@ -426,12 +426,12 @@ if st.button(language["generate_button"]):
                 """,
                 unsafe_allow_html=True,
             )
-        except (
-            HTTPError,
-            URLError,
-            TimeoutError,
-            KeyError,
-            ValueError,
-            json.JSONDecodeError,
-        ):
-            st.error(language["assistant_error"])
+        except HTTPError as error:
+            error_body = error.read().decode("utf-8", errors="replace")
+            st.error(f"Online AI request failed ({error.code}): {error_body}")
+        except URLError as error:
+            st.error(f"Could not reach the AI service: {error.reason}")
+        except TimeoutError:
+            st.error("The AI request timed out. Please try again.")
+        except (KeyError, ValueError, json.JSONDecodeError) as error:
+            st.error(f"The AI service returned an unexpected response: {error}")
