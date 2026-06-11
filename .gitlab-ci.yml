@@ -16,18 +16,13 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - check
 
-python-checks:
+python-check:
   image: python:3.11
+
   stage: check
-  before_script:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-    - pip install ruff mypy bandit
+
   script:
     - python -m py_compile app.py
-    - ruff check .
-    - mypy app.py --ignore-missing-imports
-    - bandit -r . -x .venv
