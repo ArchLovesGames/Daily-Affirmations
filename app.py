@@ -1,6 +1,7 @@
 import random
 import json
 import os
+import re
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -71,6 +72,8 @@ LANGUAGES = {
         "missing_key": "Please enter your API key for BYOT mode.",
         "translation_caption": "Local-language reflections use Sarvam AI translation when enhanced translation is configured.",
         "ollama_translation_caption": "Ollama generates the affirmation locally. Hindi and Telugu translation use the online Sarvam API when enabled; English mode remains fully local.",
+        "sarvam_key_label": "Sarvam API key for translation",
+        "sarvam_key_help": "Optional. Add this if you want enhanced Hindi or Telugu translation for the AI assistant.",
         "sarvam_key_warning": "Enhanced local-language translation is unavailable because SARVAM_API_KEY is not configured. Falling back to direct AI generation.",
         "sarvam_failure_warning": "Enhanced translation is unavailable right now. Showing the AI response without translation.",
         "assistant_error": "AI reflection is unavailable right now, but your daily affirmation is still here for you.",
@@ -136,6 +139,8 @@ LANGUAGES = {
         "missing_key": "ज़रा BYOT mode के लिए अपनी API key डालिए।",
         "translation_caption": "जब enhanced translation चालू होता है, तो Local-language reflections में Sarvam AI translation इस्तेमाल होता है।",
         "ollama_translation_caption": "Ollama locally affirmation generate करता है। जब online Sarvam API चालू होता है, तो Hindi और Telugu translation के लिए इसका इस्तेमाल होता है; English mode पूरी तरह से local ही रहता है।",
+        "sarvam_key_label": "Translation के लिए Sarvam API key",
+        "sarvam_key_help": "Optional. AI assistant की बेहतर Hindi या Telugu translation के लिए इसे डालें।",
         "sarvam_key_warning": "SARVAM_API_KEY configure नहीं किया गया है, इसलिए enhanced local-language translation नहीं हो सकता। वापस direct AI generation पर आ रही हूँ।",
         "sarvam_failure_warning": "अभी Enhanced Translation नहीं चल रहा है। बिना translation के AI response दिखा रहा हूँ।",
         "assistant_error": "AI reflection अभी available नहीं है, लेकिन आपकी daily affirmation आपके लिए अभी भी मौजूद है।",
@@ -201,6 +206,8 @@ LANGUAGES = {
         "missing_key": "BYOT mode-కి మీ API key enter చేయండి.",
         "translation_caption": "Enhanced translation configure చేసినప్పుడు, Local-language reflections-లో Sarvam AI translation వాడతారు.",
         "ollama_translation_caption": "Ollama affirmation-ని local-గా generate చేస్తుంది. Hindi, Telugu translation-కి online Sarvam API enable చేస్తే వాడతారు. English mode మాత్రం పూర్తిగా local-లోనే ఉంటుంది.",
+        "sarvam_key_label": "Translation కోసం Sarvam API key",
+        "sarvam_key_help": "Optional. AI assistant కోసం మెరుగైన Hindi లేదా Telugu translation కావాలంటే దీన్ని ఇవ్వండి.",
         "sarvam_key_warning": "SARVAM_API_KEY configure కాలేదు కాబట్టి enhanced local-language translation లేదు. direct AI generation-కి తిరిగి వెళ్తున్నాను.",
         "sarvam_failure_warning": "ఇప్పుడు Enhanced Translation లేదు. Translation లేకుండా AI response చూపిస్తున్నాను.",
         "assistant_error": "AI reflection ఇప్పుడు available లేదు. కానీ మీ daily affirmation మాత్రం ఇంకా ఉంది.",
@@ -213,6 +220,316 @@ SARVAM_LANGUAGE_CODES = {
     "हिन्दी": "hi-IN",
     "తెలుగు": "te-IN",
 }
+
+
+SCRIPT_FALLBACKS = {
+    "हिन्दी": {
+        "script": "Devanagari",
+        "examples": "project -> प्रोजेक्ट, demo -> डेमो",
+    },
+    "తెలుగు": {
+        "script": "Telugu",
+        "examples": "project -> ప్రాజెక్ట్, demo -> డెమో",
+    },
+}
+
+COMMON_TRANSLITERATIONS = {
+    "हिन्दी": {
+        "ai": "एआई",
+        "api": "एपीआई",
+        "byot": "बीवाईओटी",
+        "demo": "डेमो",
+        "email": "ईमेल",
+        "local": "लोकल",
+        "model": "मॉडल",
+        "ollama": "ओलामा",
+        "online": "ऑनलाइन",
+        "project": "प्रोजेक्ट",
+        "token": "टोकन",
+        "tokens": "टोकन",
+        "work": "वर्क",
+    },
+    "తెలుగు": {
+        "ai": "ఏఐ",
+        "api": "ఏపీఐ",
+        "byot": "బీవైఓటీ",
+        "demo": "డెమో",
+        "email": "ఈమెయిల్",
+        "local": "లోకల్",
+        "model": "మోడల్",
+        "ollama": "ఒల్లామా",
+        "online": "ఆన్‌లైన్",
+        "project": "ప్రాజెక్ట్",
+        "token": "టోకెన్",
+        "tokens": "టోకెన్లు",
+        "work": "వర్క్",
+    },
+}
+
+LETTER_TRANSLITERATIONS = {
+    "हिन्दी": {
+        "a": "ए",
+        "b": "बी",
+        "c": "सी",
+        "d": "डी",
+        "e": "ई",
+        "f": "एफ",
+        "g": "जी",
+        "h": "एच",
+        "i": "आई",
+        "j": "जे",
+        "k": "के",
+        "l": "एल",
+        "m": "एम",
+        "n": "एन",
+        "o": "ओ",
+        "p": "पी",
+        "q": "क्यू",
+        "r": "आर",
+        "s": "एस",
+        "t": "टी",
+        "u": "यू",
+        "v": "वी",
+        "w": "डब्ल्यू",
+        "x": "एक्स",
+        "y": "वाई",
+        "z": "ज़ेड",
+    },
+    "తెలుగు": {
+        "a": "ఏ",
+        "b": "బీ",
+        "c": "సీ",
+        "d": "డీ",
+        "e": "ఈ",
+        "f": "ఎఫ్",
+        "g": "జీ",
+        "h": "హెచ్",
+        "i": "ఐ",
+        "j": "జే",
+        "k": "కే",
+        "l": "ఎల్",
+        "m": "ఎమ్",
+        "n": "ఎన్",
+        "o": "ఓ",
+        "p": "పీ",
+        "q": "క్యూ",
+        "r": "ఆర్",
+        "s": "ఎస్",
+        "t": "టీ",
+        "u": "యూ",
+        "v": "వీ",
+        "w": "డబ్ల్యూ",
+        "x": "ఎక్స్",
+        "y": "వై",
+        "z": "జెడ్",
+    },
+}
+
+PHONETIC_TRANSLITERATIONS = {
+    "हिन्दी": {
+        "vowels": {
+            "a": ("अ", ""),
+            "e": ("ए", "े"),
+            "i": ("इ", "ि"),
+            "o": ("ओ", "ो"),
+            "u": ("उ", "ु"),
+        },
+        "vowel_groups": {
+            "aa": ("आ", "ा"),
+            "ai": ("ऐ", "ै"),
+            "au": ("औ", "ौ"),
+            "ee": ("ई", "ी"),
+            "oo": ("ऊ", "ू"),
+            "ou": ("आउ", "ाउ"),
+        },
+        "consonants": {
+            "bh": "भ",
+            "ch": "च",
+            "dh": "ध",
+            "gh": "घ",
+            "kh": "ख",
+            "ph": "फ",
+            "sh": "श",
+            "th": "थ",
+            "wh": "व",
+            "b": "ब",
+            "c": "क",
+            "d": "ड",
+            "f": "फ",
+            "g": "ग",
+            "h": "ह",
+            "j": "ज",
+            "k": "क",
+            "l": "ल",
+            "m": "म",
+            "n": "न",
+            "p": "प",
+            "q": "क",
+            "r": "र",
+            "s": "स",
+            "t": "ट",
+            "v": "व",
+            "w": "व",
+            "x": "क्स",
+            "y": "य",
+            "z": "ज़",
+        },
+        "virama": "्",
+    },
+    "తెలుగు": {
+        "vowels": {
+            "a": ("అ", ""),
+            "e": ("ఎ", "ె"),
+            "i": ("ఇ", "ి"),
+            "o": ("ఒ", "ొ"),
+            "u": ("ఉ", "ు"),
+        },
+        "vowel_groups": {
+            "aa": ("ఆ", "ా"),
+            "ai": ("ఐ", "ై"),
+            "au": ("ఔ", "ౌ"),
+            "ee": ("ఈ", "ీ"),
+            "oo": ("ఊ", "ూ"),
+            "ou": ("ఔ", "ౌ"),
+        },
+        "consonants": {
+            "bh": "భ",
+            "ch": "చ",
+            "dh": "ధ",
+            "gh": "ఘ",
+            "kh": "ఖ",
+            "ph": "ఫ",
+            "sh": "ష",
+            "th": "థ",
+            "wh": "వ",
+            "b": "బ",
+            "c": "క",
+            "d": "డ",
+            "f": "ఫ",
+            "g": "గ",
+            "h": "హ",
+            "j": "జ",
+            "k": "క",
+            "l": "ల",
+            "m": "మ",
+            "n": "న",
+            "p": "ప",
+            "q": "క",
+            "r": "ర",
+            "s": "స",
+            "t": "ట",
+            "v": "వ",
+            "w": "వ",
+            "x": "క్స్",
+            "y": "య",
+            "z": "జ",
+        },
+        "virama": "్",
+    },
+}
+
+
+def transliterate_latin_word(word, language_name):
+    lower_word = word.lower()
+    common_words = COMMON_TRANSLITERATIONS.get(language_name, {})
+
+    if lower_word in common_words:
+        return common_words[lower_word]
+
+    if word.isupper() and len(word) <= 4:
+        return transliterate_latin_letters(word, language_name)
+
+    return transliterate_latin_phonetically(lower_word, language_name)
+
+
+def transliterate_latin_letters(word, language_name):
+    letters = LETTER_TRANSLITERATIONS.get(language_name, {})
+
+    if not letters:
+        return word
+
+    return "".join(letters.get(character.lower(), character) for character in word)
+
+
+def transliterate_latin_phonetically(word, language_name):
+    rules = PHONETIC_TRANSLITERATIONS.get(language_name)
+
+    if not rules:
+        return word
+
+    if len(word) > 3 and word.endswith("e"):
+        word = word[:-1]
+
+    pieces = []
+    index = 0
+    vowels = rules["vowels"]
+    vowel_groups = rules["vowel_groups"]
+    consonants = rules["consonants"]
+    virama = rules["virama"]
+
+    while index < len(word):
+        vowel_group = next(
+            (group for group in sorted(vowel_groups, key=len, reverse=True)
+             if word.startswith(group, index)),
+            None,
+        )
+
+        if vowel_group:
+            pieces.append(vowel_groups[vowel_group][0])
+            index += len(vowel_group)
+            continue
+
+        character = word[index]
+
+        if character in vowels:
+            pieces.append(vowels[character][0])
+            index += 1
+            continue
+
+        consonant = next(
+            (group for group in sorted(consonants, key=len, reverse=True)
+             if word.startswith(group, index)),
+            None,
+        )
+
+        if not consonant:
+            pieces.append(character)
+            index += 1
+            continue
+
+        native_consonant = consonants[consonant]
+        next_index = index + len(consonant)
+        next_vowel_group = next(
+            (group for group in sorted(vowel_groups, key=len, reverse=True)
+             if word.startswith(group, next_index)),
+            None,
+        )
+
+        if next_vowel_group:
+            pieces.append(native_consonant + vowel_groups[next_vowel_group][1])
+            index = next_index + len(next_vowel_group)
+            continue
+
+        if next_index < len(word) and word[next_index] in vowels:
+            pieces.append(native_consonant + vowels[word[next_index]][1])
+            index = next_index + 1
+            continue
+
+        pieces.append(native_consonant + virama)
+        index = next_index
+
+    return "".join(pieces)
+
+
+def apply_native_script_fallback(text, language_name):
+    if language_name not in SCRIPT_FALLBACKS:
+        return text
+
+    return re.sub(
+        r"\b[A-Za-z][A-Za-z0-9+-]*\b",
+        lambda match: transliterate_latin_word(match.group(0), language_name),
+        text,
+    )
 
 
 def show_help_popup(title, steps):
@@ -246,7 +563,12 @@ def load_affirmations(language_code):
     return cleaned_affirmations
 
 
-def get_sarvam_api_key():
+def get_sarvam_api_key(runtime_api_key=""):
+    api_key = runtime_api_key.strip()
+
+    if api_key:
+        return api_key
+
     api_key = os.environ.get("SARVAM_API_KEY", "").strip()
 
     if api_key:
@@ -262,8 +584,9 @@ def translate_with_sarvam(
     text,
     target_language_code,
     source_language_code="auto",
+    api_key="",
 ):
-    api_key = get_sarvam_api_key()
+    api_key = get_sarvam_api_key(api_key)
 
     if not api_key:
         raise ValueError("SARVAM_API_KEY is not configured")
@@ -317,9 +640,12 @@ def build_reflection_prompt(
     )
 
     if response_language_name != "English":
+        script_fallback = SCRIPT_FALLBACKS[response_language_name]
         language_instruction = (
             f"Respond in {response_language_name} because enhanced translation "
-            "is unavailable."
+            "is unavailable. If an English word has no natural translation, "
+            f"write it in {script_fallback['script']} script instead of Latin "
+            f"letters. Examples: {script_fallback['examples']}."
         )
 
     return (
@@ -363,6 +689,7 @@ def generate_personal_affirmation(
     model=None,
     ollama_url=None,
     ollama_model=None,
+    sarvam_api_key="",
 ):
     def request_ai(prompt):
         if assistant_mode == language["byot_mode"]:
@@ -383,12 +710,12 @@ def generate_personal_affirmation(
         prompt = build_reflection_prompt(reflection_text)
         return request_ai(prompt)
 
-    sarvam_api_key = get_sarvam_api_key()
+    sarvam_api_key = get_sarvam_api_key(sarvam_api_key)
 
     if not sarvam_api_key:
         st.warning(language["sarvam_key_warning"])
         prompt = build_reflection_prompt(reflection_text, language_name)
-        return request_ai(prompt)
+        return apply_native_script_fallback(request_ai(prompt), language_name)
 
     target_language_code = SARVAM_LANGUAGE_CODES[language_name]
 
@@ -397,24 +724,27 @@ def generate_personal_affirmation(
             reflection_text,
             "en-IN",
             source_language_code="auto",
+            api_key=sarvam_api_key,
         )
     except ValueError:
         st.warning(language["sarvam_failure_warning"])
         prompt = build_reflection_prompt(reflection_text, language_name)
-        return request_ai(prompt)
+        return apply_native_script_fallback(request_ai(prompt), language_name)
 
     prompt = build_reflection_prompt(english_reflection)
     english_affirmation = request_ai(prompt)
 
     try:
-        return translate_with_sarvam(
+        translated_affirmation = translate_with_sarvam(
             english_affirmation,
             target_language_code,
             source_language_code="en-IN",
+            api_key=sarvam_api_key,
         )
+        return apply_native_script_fallback(translated_affirmation, language_name)
     except ValueError:
         st.warning(language["sarvam_failure_warning"])
-        return english_affirmation
+        return apply_native_script_fallback(english_affirmation, language_name)
 
 
 def request_online_affirmation(api_url, api_key, model, prompt):
@@ -563,7 +893,15 @@ assistant_mode = st.radio(
     horizontal=True,
 )
 
+sarvam_api_key = ""
+
 if language_name != "English":
+    sarvam_api_key = st.text_input(
+        language["sarvam_key_label"],
+        type="password",
+        help=language["sarvam_key_help"],
+    )
+
     if assistant_mode == language["ollama_mode"]:
         st.caption(language["ollama_translation_caption"])
     else:
@@ -611,6 +949,7 @@ if st.button(language["generate_button"]):
                     model=model if assistant_mode == language["byot_mode"] else None,
                     ollama_url=ollama_url if assistant_mode == language["ollama_mode"] else None,
                     ollama_model=ollama_model if assistant_mode == language["ollama_mode"] else None,
+                    sarvam_api_key=sarvam_api_key,
                 )
 
             st.markdown(
