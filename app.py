@@ -282,8 +282,10 @@ def request_online_affirmation(api_url, api_key, model, prompt):
         api_url,
         data=json.dumps(payload).encode("utf-8"),
         headers={
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {api_key.strip()}",
             "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 DailyAffirmationsApp/1.0",
         },
         method="POST",
     )
