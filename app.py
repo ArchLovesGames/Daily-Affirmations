@@ -3,7 +3,6 @@ import json
 from html import escape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 import streamlit as st
@@ -40,7 +39,14 @@ LANGUAGES = {
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama model",
         "ollama_help_text": "New to Ollama?",
-        "ollama_help_link": "Open the quick Ollama setup guide (.txt)",
+        "ollama_setup_title": "Quick Ollama setup",
+        "ollama_setup_steps": [
+            "Install Ollama from `https://ollama.com/`.",
+            "Pull a model in your terminal: `ollama pull llama3.2`.",
+            "Start Ollama by opening the app or running `ollama serve`.",
+            "Use `http://localhost:11434` in this app unless you configured a different host.",
+            "Set the model to `llama3.2`, write your reflection, and generate.",
+        ],
         "ollama_url_help_title": "If localhost does not match your Ollama URL",
         "ollama_url_steps": [
             "Check the configured host in a terminal: `echo $OLLAMA_HOST` on macOS/Linux or `$env:OLLAMA_HOST` in Windows PowerShell.",
@@ -84,7 +90,14 @@ LANGUAGES = {
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama मॉडल",
         "ollama_help_text": "Ollama पहली बार इस्तेमाल कर रहे हैं?",
-        "ollama_help_link": "त्वरित Ollama सेटअप गाइड खोलें (.txt)",
+        "ollama_setup_title": "त्वरित Ollama सेटअप",
+        "ollama_setup_steps": [
+            "`https://ollama.com/` से Ollama इंस्टॉल करें।",
+            "टर्मिनल में मॉडल खींचें: `ollama pull llama3.2`।",
+            "Ollama ऐप खोलें या `ollama serve` चलाकर Ollama शुरू करें।",
+            "अगर आपने अलग होस्ट कॉन्फिगर नहीं किया है, तो इस ऐप में `http://localhost:11434` इस्तेमाल करें।",
+            "मॉडल में `llama3.2` लिखें, अपना विचार लिखें, और सकारात्मक वाक्य बनाएं।",
+        ],
         "ollama_url_help_title": "अगर localhost आपके Ollama URL से match नहीं करता",
         "ollama_url_steps": [
             "टर्मिनल में कॉन्फिगर किया गया होस्ट देखें: macOS/Linux पर `echo $OLLAMA_HOST` या Windows PowerShell में `$env:OLLAMA_HOST`।",
@@ -128,7 +141,14 @@ LANGUAGES = {
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama మోడల్",
         "ollama_help_text": "Ollama కొత్తగా వాడుతున్నారా?",
-        "ollama_help_link": "త్వరిత Ollama సెటప్ గైడ్ తెరవండి (.txt)",
+        "ollama_setup_title": "త్వరిత Ollama సెటప్",
+        "ollama_setup_steps": [
+            "`https://ollama.com/` నుండి Ollama ఇన్‌స్టాల్ చేయండి.",
+            "టెర్మినల్‌లో మోడల్‌ను పొందండి: `ollama pull llama3.2`.",
+            "Ollama యాప్ తెరవండి లేదా `ollama serve` నడిపి Ollama ప్రారంభించండి.",
+            "మీరు వేరే హోస్ట్ అమర్చకపోతే, ఈ యాప్‌లో `http://localhost:11434` వాడండి.",
+            "మోడల్‌గా `llama3.2` ఇవ్వండి, మీ ఆలోచన రాయండి, తర్వాత ధైర్య వాక్యాన్ని తయారు చేయండి.",
+        ],
         "ollama_url_help_title": "localhost మీ Ollama URL తో match కాకపోతే",
         "ollama_url_steps": [
             "టెర్మినల్‌లో అమర్చిన హోస్ట్‌ను చూడండి: macOS/Linux లో `echo $OLLAMA_HOST`, Windows PowerShell లో `$env:OLLAMA_HOST`.",
@@ -143,73 +163,6 @@ LANGUAGES = {
         "assistant_error": "AI ఆలోచన సహాయం ప్రస్తుతం అందుబాటులో లేదు, కానీ మీ రోజువారీ ధైర్య వాక్యం మీకోసం ఉంది.",
     },
 }
-
-
-OLLAMA_TUTORIAL_TEXT = """Daily Affirmations - Local Ollama Setup
-
-Use this guide if you want the reflection assistant to run on your own computer.
-
-1. Install Ollama
-   Download Ollama from https://ollama.com/ and finish the installer.
-
-2. Pull a model
-   Open a terminal and run:
-   ollama pull llama3.2
-
-3. Start Ollama
-   Ollama usually starts automatically after installation. If needed, open the
-   Ollama app or run:
-   ollama serve
-
-4. Check the local URL
-   Daily Affirmations uses this default Ollama URL:
-   http://localhost:11434
-
-5. If localhost does not match your setup
-   Check whether Ollama was configured with a different host:
-   macOS/Linux:
-   echo $OLLAMA_HOST
-
-   Windows PowerShell:
-   $env:OLLAMA_HOST
-
-   If Ollama is running on another computer or custom port, use the full URL
-   from that setup, for example:
-   http://192.168.1.20:11434
-
-   You can test a URL by opening:
-   http://localhost:11434/api/tags
-
-   Or from a terminal:
-   curl http://localhost:11434/api/tags
-
-6. Pull a model for a configured host
-   If you use a custom host, pull the model against that same host:
-   OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2
-
-   Windows PowerShell:
-   $env:OLLAMA_HOST="http://your-host:11434"
-   ollama pull llama3.2
-
-7. Use it in the app
-   Select "Local Ollama assistant", keep the URL as http://localhost:11434,
-   or replace it with your configured URL. Set the model to llama3.2,
-   write your reflection, and generate.
-
-If it fails, confirm that Ollama is running and that the model name in the app
-matches the model you pulled.
-"""
-
-
-def build_ollama_tutorial_link(link_text):
-    encoded_tutorial = quote(OLLAMA_TUTORIAL_TEXT)
-
-    return (
-        '<a href="data:text/plain;charset=utf-8,'
-        f'{encoded_tutorial}" '
-        'download="ollama_local_ai_setup.txt">'
-        f"{escape(link_text)}</a>"
-    )
 
 
 def show_help_popup(title, steps):
@@ -424,11 +377,7 @@ else:
     )
     ollama_model = st.text_input(language["ollama_model_label"], value="llama3.2")
     show_help_popup(language["ollama_url_help_title"], language["ollama_url_steps"])
-    st.markdown(
-        f"{escape(language['ollama_help_text'])} "
-        f"{build_ollama_tutorial_link(language['ollama_help_link'])}",
-        unsafe_allow_html=True,
-    )
+    show_help_popup(language["ollama_setup_title"], language["ollama_setup_steps"])
 
 if st.button(language["generate_button"]):
     reflection_text = reflection.strip()
