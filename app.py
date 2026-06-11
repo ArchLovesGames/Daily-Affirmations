@@ -27,12 +27,28 @@ LANGUAGES = {
         "ollama_mode": "Local Ollama assistant",
         "api_key_label": "API key",
         "api_key_help": "Your key is used only for this request.",
+        "api_key_help_title": "How to add an API key",
+        "api_key_steps": [
+            "Choose BYOT online assistant.",
+            "Create or copy an API key from your AI provider account.",
+            "Paste the key into the password field. It is used only for this request and is not saved.",
+            "Keep the default API URL for OpenAI-compatible providers, or paste your provider's chat completions endpoint.",
+            "Set the model name that your provider supports, then generate your affirmation.",
+        ],
         "api_url_label": "API URL",
         "online_model_label": "Online model",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama model",
         "ollama_help_text": "New to Ollama?",
         "ollama_help_link": "Open the quick Ollama setup guide (.txt)",
+        "ollama_url_help_title": "If localhost does not match your Ollama URL",
+        "ollama_url_steps": [
+            "Check the configured host in a terminal: `echo $OLLAMA_HOST` on macOS/Linux or `$env:OLLAMA_HOST` in Windows PowerShell.",
+            "If Ollama shows a custom host, paste it here as a full URL, for example `http://192.168.1.20:11434`.",
+            "Test the URL with `/api/tags`, for example `curl http://localhost:11434/api/tags`.",
+            "Pull the model on that same configured host: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`.",
+            "Use the same URL and model name in this app.",
+        ],
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
@@ -55,12 +71,28 @@ LANGUAGES = {
         "ollama_mode": "स्थानीय Ollama सहायक",
         "api_key_label": "API कुंजी",
         "api_key_help": "आपकी कुंजी केवल इस अनुरोध के लिए उपयोग होगी।",
+        "api_key_help_title": "API कुंजी कैसे जोड़ें",
+        "api_key_steps": [
+            "BYOT ऑनलाइन सहायक चुनें।",
+            "अपने AI सेवा खाते से API कुंजी बनाएं या कॉपी करें।",
+            "कुंजी को पासवर्ड वाले बॉक्स में डालें। यह केवल इसी अनुरोध के लिए उपयोग होगी और सहेजी नहीं जाएगी।",
+            "OpenAI-संगत सेवाओं के लिए डिफॉल्ट API URL रखें, या अपनी सेवा का chat completions endpoint डालें।",
+            "अपनी सेवा द्वारा समर्थित मॉडल नाम लिखें, फिर अपना सकारात्मक वाक्य बनाएं।",
+        ],
         "api_url_label": "API URL",
         "online_model_label": "ऑनलाइन मॉडल",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama मॉडल",
         "ollama_help_text": "Ollama पहली बार इस्तेमाल कर रहे हैं?",
         "ollama_help_link": "त्वरित Ollama सेटअप गाइड खोलें (.txt)",
+        "ollama_url_help_title": "अगर localhost आपके Ollama URL से match नहीं करता",
+        "ollama_url_steps": [
+            "टर्मिनल में कॉन्फिगर किया गया होस्ट देखें: macOS/Linux पर `echo $OLLAMA_HOST` या Windows PowerShell में `$env:OLLAMA_HOST`।",
+            "अगर Ollama अलग होस्ट दिखाता है, तो पूरा URL यहां डालें, जैसे `http://192.168.1.20:11434`।",
+            "URL को `/api/tags` से जांचें, जैसे `curl http://localhost:11434/api/tags`।",
+            "मॉडल उसी कॉन्फिगर किए गए होस्ट पर खींचें: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`।",
+            "इस ऐप में वही URL और मॉडल नाम इस्तेमाल करें।",
+        ],
         "generate_button": "व्यक्तिगत सकारात्मक वाक्य बनाएं",
         "empty_reflection": "कृपया पहले एक छोटा विचार लिखें।",
         "missing_key": "कृपया BYOT मोड के लिए अपनी API कुंजी डालें।",
@@ -83,12 +115,28 @@ LANGUAGES = {
         "ollama_mode": "లోకల్ Ollama సహాయకుడు",
         "api_key_label": "API కీ",
         "api_key_help": "మీ కీ ఈ అభ్యర్థనకే ఉపయోగించబడుతుంది.",
+        "api_key_help_title": "API కీని ఎలా జోడించాలి",
+        "api_key_steps": [
+            "BYOT ఆన్లైన్ సహాయకుడిని ఎంచుకోండి.",
+            "మీ AI సేవ ఖాతా నుండి API కీని సృష్టించండి లేదా కాపీ చేయండి.",
+            "ఆ కీని పాస్‌వర్డ్ పెట్టెలో అతికించండి. ఇది ఈ అభ్యర్థనకే వాడబడుతుంది, భద్రపరచబడదు.",
+            "OpenAI-సరిపోలే సేవలకు డిఫాల్ట్ API URL ఉంచండి, లేదా మీ సేవ యొక్క chat completions endpoint ఇవ్వండి.",
+            "మీ సేవలో అందుబాటులో ఉన్న మోడల్ పేరును రాయండి, తర్వాత మీ ధైర్య వాక్యాన్ని తయారు చేయండి.",
+        ],
         "api_url_label": "API URL",
         "online_model_label": "ఆన్లైన్ మోడల్",
         "ollama_url_label": "Ollama URL",
         "ollama_model_label": "Ollama మోడల్",
         "ollama_help_text": "Ollama కొత్తగా వాడుతున్నారా?",
         "ollama_help_link": "త్వరిత Ollama సెటప్ గైడ్ తెరవండి (.txt)",
+        "ollama_url_help_title": "localhost మీ Ollama URL తో match కాకపోతే",
+        "ollama_url_steps": [
+            "టెర్మినల్‌లో అమర్చిన హోస్ట్‌ను చూడండి: macOS/Linux లో `echo $OLLAMA_HOST`, Windows PowerShell లో `$env:OLLAMA_HOST`.",
+            "Ollama వేరే హోస్ట్ చూపిస్తే, పూర్తి URL ను ఇక్కడ ఇవ్వండి, ఉదాహరణకు `http://192.168.1.20:11434`.",
+            "URL ను `/api/tags` తో పరీక్షించండి, ఉదాహరణకు `curl http://localhost:11434/api/tags`.",
+            "మోడల్‌ను అదే అమర్చిన హోస్ట్‌పై పొందండి: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`.",
+            "ఈ యాప్‌లో అదే URL మరియు మోడల్ పేరును వాడండి.",
+        ],
         "generate_button": "వ్యక్తిగత ధైర్య వాక్యం తయారు చేయండి",
         "empty_reflection": "దయచేసి ముందుగా ఒక చిన్న ఆలోచన రాయండి.",
         "missing_key": "దయచేసి BYOT మోడ్ కోసం మీ API కీ ఇవ్వండి.",
@@ -117,9 +165,36 @@ Use this guide if you want the reflection assistant to run on your own computer.
    Daily Affirmations uses this default Ollama URL:
    http://localhost:11434
 
-5. Use it in the app
+5. If localhost does not match your setup
+   Check whether Ollama was configured with a different host:
+   macOS/Linux:
+   echo $OLLAMA_HOST
+
+   Windows PowerShell:
+   $env:OLLAMA_HOST
+
+   If Ollama is running on another computer or custom port, use the full URL
+   from that setup, for example:
+   http://192.168.1.20:11434
+
+   You can test a URL by opening:
+   http://localhost:11434/api/tags
+
+   Or from a terminal:
+   curl http://localhost:11434/api/tags
+
+6. Pull a model for a configured host
+   If you use a custom host, pull the model against that same host:
+   OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2
+
+   Windows PowerShell:
+   $env:OLLAMA_HOST="http://your-host:11434"
+   ollama pull llama3.2
+
+7. Use it in the app
    Select "Local Ollama assistant", keep the URL as http://localhost:11434,
-   set the model to llama3.2, write your reflection, and generate.
+   or replace it with your configured URL. Set the model to llama3.2,
+   write your reflection, and generate.
 
 If it fails, confirm that Ollama is running and that the model name in the app
 matches the model you pulled.
@@ -135,6 +210,17 @@ def build_ollama_tutorial_link(link_text):
         'download="ollama_local_ai_setup.txt">'
         f"{escape(link_text)}</a>"
     )
+
+
+def show_help_popup(title, steps):
+    if hasattr(st, "popover"):
+        popup = st.popover(title)
+    else:
+        popup = st.expander(title)
+
+    with popup:
+        for step in steps:
+            st.markdown(f"- {step}")
 
 
 def load_affirmations(language_code):
@@ -330,12 +416,14 @@ if assistant_mode == language["byot_mode"]:
         value="https://api.openai.com/v1/chat/completions",
     )
     model = st.text_input(language["online_model_label"], value="gpt-4o-mini")
+    show_help_popup(language["api_key_help_title"], language["api_key_steps"])
 else:
     ollama_url = st.text_input(
         language["ollama_url_label"],
         value="http://localhost:11434",
     )
     ollama_model = st.text_input(language["ollama_model_label"], value="llama3.2")
+    show_help_popup(language["ollama_url_help_title"], language["ollama_url_steps"])
     st.markdown(
         f"{escape(language['ollama_help_text'])} "
         f"{build_ollama_tutorial_link(language['ollama_help_link'])}",
