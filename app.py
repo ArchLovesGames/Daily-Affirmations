@@ -55,6 +55,16 @@ LANGUAGES = {
             "Pull the model on that same configured host: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`.",
             "Use the same URL and model name in this app.",
         ],
+        "cloudflare_help_title": "Share a local Ollama webapp with Cloudflare Tunnel",
+        "cloudflare_steps": [
+            "Install Cloudflare Tunnel: `brew install cloudflared` on macOS, or download it from `https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/`.",
+            "Start Ollama locally: `ollama serve`.",
+            "Pull the model if needed: `ollama pull llama3.2`.",
+            "Start this Streamlit app locally: `streamlit run app.py --server.address 127.0.0.1 --server.port 8501`.",
+            "In another terminal, expose the webapp: `cloudflared tunnel --url http://localhost:8501`.",
+            "Open or share the `https://...trycloudflare.com` link printed by cloudflared. That is the user-facing webapp link.",
+            "Inside the app, keep the Ollama URL as `http://localhost:11434` because Ollama is still running on the same machine as Streamlit.",
+        ],
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
@@ -106,6 +116,16 @@ LANGUAGES = {
             "मॉडल उसी कॉन्फिगर किए गए होस्ट पर खींचें: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`।",
             "इस ऐप में वही URL और मॉडल नाम इस्तेमाल करें।",
         ],
+        "cloudflare_help_title": "Cloudflare Tunnel से स्थानीय Ollama वेबऐप शेयर करें",
+        "cloudflare_steps": [
+            "Cloudflare Tunnel इंस्टॉल करें: macOS पर `brew install cloudflared`, या `https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/` से डाउनलोड करें।",
+            "Ollama स्थानीय रूप से शुरू करें: `ollama serve`।",
+            "जरूरत हो तो मॉडल खींचें: `ollama pull llama3.2`।",
+            "इस Streamlit ऐप को स्थानीय रूप से शुरू करें: `streamlit run app.py --server.address 127.0.0.1 --server.port 8501`।",
+            "दूसरे टर्मिनल में वेबऐप को बाहर उपलब्ध कराएं: `cloudflared tunnel --url http://localhost:8501`।",
+            "cloudflared द्वारा दिखाया गया `https://...trycloudflare.com` लिंक खोलें या शेयर करें। यही user-facing वेबऐप लिंक है।",
+            "ऐप के अंदर Ollama URL `http://localhost:11434` ही रखें, क्योंकि Ollama अभी भी Streamlit वाली मशीन पर चल रहा है।",
+        ],
         "generate_button": "व्यक्तिगत सकारात्मक वाक्य बनाएं",
         "empty_reflection": "कृपया पहले एक छोटा विचार लिखें।",
         "missing_key": "कृपया BYOT मोड के लिए अपनी API कुंजी डालें।",
@@ -156,6 +176,16 @@ LANGUAGES = {
             "URL ను `/api/tags` తో పరీక్షించండి, ఉదాహరణకు `curl http://localhost:11434/api/tags`.",
             "మోడల్‌ను అదే అమర్చిన హోస్ట్‌పై పొందండి: `OLLAMA_HOST=http://your-host:11434 ollama pull llama3.2`.",
             "ఈ యాప్‌లో అదే URL మరియు మోడల్ పేరును వాడండి.",
+        ],
+        "cloudflare_help_title": "Cloudflare Tunnel తో లోకల్ Ollama వెబ్ఆప్‌ను షేర్ చేయండి",
+        "cloudflare_steps": [
+            "Cloudflare Tunnel ఇన్‌స్టాల్ చేయండి: macOS లో `brew install cloudflared`, లేదా `https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/` నుండి డౌన్‌లోడ్ చేయండి.",
+            "Ollama ను లోకల్‌గా ప్రారంభించండి: `ollama serve`.",
+            "అవసరమైతే మోడల్‌ను పొందండి: `ollama pull llama3.2`.",
+            "ఈ Streamlit యాప్‌ను లోకల్‌గా ప్రారంభించండి: `streamlit run app.py --server.address 127.0.0.1 --server.port 8501`.",
+            "మరొక టెర్మినల్‌లో వెబ్ఆప్‌ను బయటకు అందుబాటులో ఉంచండి: `cloudflared tunnel --url http://localhost:8501`.",
+            "cloudflared చూపించే `https://...trycloudflare.com` లింక్‌ను తెరవండి లేదా షేర్ చేయండి. అదే user-facing వెబ్ఆప్ లింక్.",
+            "యాప్‌లో Ollama URL ను `http://localhost:11434` గానే ఉంచండి, ఎందుకంటే Ollama ఇంకా Streamlit నడుస్తున్న అదే మెషీన్‌లో ఉంటుంది.",
         ],
         "generate_button": "వ్యక్తిగత ధైర్య వాక్యం తయారు చేయండి",
         "empty_reflection": "దయచేసి ముందుగా ఒక చిన్న ఆలోచన రాయండి.",
@@ -398,6 +428,7 @@ else:
     ollama_model = st.text_input(language["ollama_model_label"], value="llama3.2")
     show_help_popup(language["ollama_url_help_title"], language["ollama_url_steps"])
     show_help_popup(language["ollama_setup_title"], language["ollama_setup_steps"])
+    show_help_popup(language["cloudflare_help_title"], language["cloudflare_steps"])
 
 if st.button(language["generate_button"]):
     reflection_text = reflection.strip()
