@@ -1,3 +1,6 @@
-streamlit
-# Ollama local AI mode uses the local HTTP API and does not require a Python package.
-# BYOT API keys are entered at runtime in the Streamlit UI.
+streamlit>=1.32
+
+# The AI integrations use Python standard-library HTTP clients.
+# Ollama local AI mode calls the local Ollama HTTP API directly.
+# BYOT provider keys are entered at runtime in the Streamlit UI.
+# Optional Sarvam translation uses the Sarvam HTTP API directly.
