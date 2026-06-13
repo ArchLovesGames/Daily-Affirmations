@@ -70,10 +70,11 @@ LANGUAGES = {
         "generate_button": "Create personal affirmation",
         "empty_reflection": "Please write a short reflection first.",
         "missing_key": "Please enter your API key for BYOT mode.",
+        "missing_sarvam_key": "Please enter your Sarvam API key for Sarvam Chat Completion.",
         "translation_caption": "Local-language reflections use Sarvam AI translation when enhanced translation is configured.",
         "ollama_translation_caption": "Ollama generates the affirmation locally. Hindi and Telugu translation use the online Sarvam API when enabled; English mode remains fully local.",
-        "sarvam_key_label": "Sarvam API key for translation",
-        "sarvam_key_help": "Optional. Add this if you want enhanced Hindi or Telugu translation for the AI assistant.",
+        "sarvam_key_label": "Sarvam API key",
+        "sarvam_key_help": "Optional for Hindi or Telugu translation. Required when the BYOT API URL is Sarvam Chat Completion.",
         "sarvam_key_warning": "Enhanced local-language translation is unavailable because SARVAM_API_KEY is not configured. Falling back to direct AI generation.",
         "sarvam_failure_warning": "Enhanced translation is unavailable right now. Showing the AI response without translation.",
         "assistant_error": "AI reflection is unavailable right now, but your daily affirmation is still here for you.",
@@ -137,10 +138,11 @@ LANGUAGES = {
         "generate_button": "अपने लिए एक affirmation बनाइए",
         "empty_reflection": "पहले एक छोटा सा reflection लिखिए।",
         "missing_key": "ज़रा BYOT mode के लिए अपनी API key डालिए।",
+        "missing_sarvam_key": "Sarvam Chat Completion के लिए अपनी Sarvam API key डालिए।",
         "translation_caption": "जब enhanced translation चालू होता है, तो Local-language reflections में Sarvam AI translation इस्तेमाल होता है।",
         "ollama_translation_caption": "Ollama locally affirmation generate करता है। जब online Sarvam API चालू होता है, तो Hindi और Telugu translation के लिए इसका इस्तेमाल होता है; English mode पूरी तरह से local ही रहता है।",
-        "sarvam_key_label": "Translation के लिए Sarvam API key",
-        "sarvam_key_help": "Optional. AI assistant की बेहतर Hindi या Telugu translation के लिए इसे डालें।",
+        "sarvam_key_label": "Sarvam API key",
+        "sarvam_key_help": "Hindi या Telugu translation के लिए optional. BYOT API URL Sarvam Chat Completion हो तो यह required है।",
         "sarvam_key_warning": "SARVAM_API_KEY configure नहीं किया गया है, इसलिए enhanced local-language translation नहीं हो सकता। वापस direct AI generation पर आ रही हूँ।",
         "sarvam_failure_warning": "अभी Enhanced Translation नहीं चल रहा है। बिना translation के AI response दिखा रहा हूँ।",
         "assistant_error": "AI reflection अभी available नहीं है, लेकिन आपकी daily affirmation आपके लिए अभी भी मौजूद है।",
@@ -204,10 +206,11 @@ LANGUAGES = {
         "generate_button": "మీ గురించి మీకు నచ్చినవి చెప్పుకోండి",
         "empty_reflection": "ముందుగా ఒక చిన్న reflection రాయండి.",
         "missing_key": "BYOT mode-కి మీ API key enter చేయండి.",
+        "missing_sarvam_key": "Sarvam Chat Completion కోసం మీ Sarvam API key enter చేయండి.",
         "translation_caption": "Enhanced translation configure చేసినప్పుడు, Local-language reflections-లో Sarvam AI translation వాడతారు.",
         "ollama_translation_caption": "Ollama affirmation-ని local-గా generate చేస్తుంది. Hindi, Telugu translation-కి online Sarvam API enable చేస్తే వాడతారు. English mode మాత్రం పూర్తిగా local-లోనే ఉంటుంది.",
-        "sarvam_key_label": "Translation కోసం Sarvam API key",
-        "sarvam_key_help": "Optional. AI assistant కోసం మెరుగైన Hindi లేదా Telugu translation కావాలంటే దీన్ని ఇవ్వండి.",
+        "sarvam_key_label": "Sarvam API key",
+        "sarvam_key_help": "Hindi లేదా Telugu translation కోసం optional. BYOT API URL Sarvam Chat Completion అయితే ఇది required.",
         "sarvam_key_warning": "SARVAM_API_KEY configure కాలేదు కాబట్టి enhanced local-language translation లేదు. direct AI generation-కి తిరిగి వెళ్తున్నాను.",
         "sarvam_failure_warning": "ఇప్పుడు Enhanced Translation లేదు. Translation లేకుండా AI response చూపిస్తున్నాను.",
         "assistant_error": "AI reflection ఇప్పుడు available లేదు. కానీ మీ daily affirmation మాత్రం ఇంకా ఉంది.",
@@ -220,6 +223,9 @@ SARVAM_LANGUAGE_CODES = {
     "हिन्दी": "hi-IN",
     "తెలుగు": "te-IN",
 }
+
+SARVAM_CHAT_API_URL = "https://api.sarvam.ai/v1/chat/completions"
+DEFAULT_ONLINE_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
 SCRIPT_FALLBACKS = {
@@ -580,6 +586,14 @@ def get_sarvam_api_key(runtime_api_key=""):
         return ""
 
 
+def is_sarvam_chat_api(api_url):
+    normalized_api_url = api_url.strip().rstrip("/").lower()
+    return (
+        normalized_api_url == SARVAM_CHAT_API_URL
+        or "api.sarvam.ai" in normalized_api_url
+    )
+
+
 def translate_with_sarvam(
     text,
     target_language_code,
@@ -698,6 +712,7 @@ def generate_personal_affirmation(
                 api_key.strip(),
                 model.strip(),
                 prompt,
+                sarvam_api_key=sarvam_api_key,
             )
 
         return request_ollama_affirmation(
@@ -747,7 +762,7 @@ def generate_personal_affirmation(
         return apply_native_script_fallback(english_affirmation, language_name)
 
 
-def request_online_affirmation(api_url, api_key, model, prompt):
+def request_online_affirmation(api_url, api_key, model, prompt, sarvam_api_key=""):
     payload = {
         "model": model,
         "messages": [
@@ -761,15 +776,21 @@ def request_online_affirmation(api_url, api_key, model, prompt):
         "max_tokens": 120,
     }
 
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 DailyAffirmationsApp/1.0",
+    }
+
+    if is_sarvam_chat_api(api_url):
+        headers["api-subscription-key"] = get_sarvam_api_key(sarvam_api_key)
+    else:
+        headers["Authorization"] = f"Bearer {api_key.strip()}"
+
     request = Request(
         api_url,
         data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Authorization": f"Bearer {api_key.strip()}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 DailyAffirmationsApp/1.0",
-        },
+        headers=headers,
         method="POST",
     )
 
@@ -893,33 +914,51 @@ assistant_mode = st.radio(
     horizontal=True,
 )
 
+api_key = ""
+api_url = DEFAULT_ONLINE_API_URL
+model = ""
+ollama_url = ""
+ollama_model = ""
 sarvam_api_key = ""
 
-if language_name != "English":
-    sarvam_api_key = st.text_input(
-        language["sarvam_key_label"],
-        type="password",
-        help=language["sarvam_key_help"],
-    )
-
-    if assistant_mode == language["ollama_mode"]:
-        st.caption(language["ollama_translation_caption"])
-    else:
-        st.caption(language["translation_caption"])
-
 if assistant_mode == language["byot_mode"]:
-    api_key = st.text_input(
-        language["api_key_label"],
-        type="password",
-        help=language["api_key_help"],
-    )
     api_url = st.text_input(
         language["api_url_label"],
-        value="https://api.groq.com/openai/v1/chat/completions",
+        value=DEFAULT_ONLINE_API_URL,
     )
     model = st.text_input(language["online_model_label"], value="llama-3.3-70b-versatile")
+
+    if is_sarvam_chat_api(api_url):
+        sarvam_api_key = st.text_input(
+            language["sarvam_key_label"],
+            type="password",
+            help=language["sarvam_key_help"],
+        )
+    else:
+        api_key = st.text_input(
+            language["api_key_label"],
+            type="password",
+            help=language["api_key_help"],
+        )
+        sarvam_api_key = st.text_input(
+            language["sarvam_key_label"],
+            type="password",
+            help=language["sarvam_key_help"],
+        )
+
+    if language_name != "English":
+        st.caption(language["translation_caption"])
+
     show_help_popup(language["api_key_help_title"], language["api_key_steps"])
 else:
+    if language_name != "English":
+        sarvam_api_key = st.text_input(
+            language["sarvam_key_label"],
+            type="password",
+            help=language["sarvam_key_help"],
+        )
+        st.caption(language["ollama_translation_caption"])
+
     ollama_url = st.text_input(
         language["ollama_url_label"],
         value="http://localhost:11434",
@@ -934,7 +973,17 @@ if st.button(language["generate_button"]):
 
     if not reflection_text:
         st.warning(language["empty_reflection"])
-    elif assistant_mode == language["byot_mode"] and not api_key.strip():
+    elif (
+        assistant_mode == language["byot_mode"]
+        and is_sarvam_chat_api(api_url)
+        and not get_sarvam_api_key(sarvam_api_key)
+    ):
+        st.warning(language["missing_sarvam_key"])
+    elif (
+        assistant_mode == language["byot_mode"]
+        and not is_sarvam_chat_api(api_url)
+        and not api_key.strip()
+    ):
         st.warning(language["missing_key"])
     else:
         try:
