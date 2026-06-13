@@ -124,19 +124,33 @@ https://ollama.com/
 ollama pull llama3.2
 ```
 
-3. Make sure Ollama is running locally. The app expects this default endpoint:
+3. Start Ollama. On desktop installs, opening the Ollama app usually starts the local server. On CLI-only installs, run:
+
+```bash
+ollama serve
+```
+
+Do not run both the desktop app and `ollama serve` on the same port.
+
+4. Confirm Ollama is reachable:
+
+```bash
+curl http://localhost:11434/api/tags
+```
+
+The app uses Ollama's `POST /api/generate` endpoint and appends `/api/generate` itself, so the Ollama URL field should contain only the base URL:
 
 ```text
 http://localhost:11434
 ```
 
-4. Start the Streamlit app:
+5. Start the Streamlit app:
 
 ```bash
 streamlit run app.py
 ```
 
-5. Select `Local Ollama assistant`, keep the Ollama URL as `http://localhost:11434`, and use the model name you pulled, such as `llama3.2`.
+6. Select `Local Ollama assistant`, keep the Ollama URL as `http://localhost:11434`, and use the model name you pulled, such as `llama3.2`.
 
 If Ollama is not running or the selected model is unavailable, the app shows a friendly error and keeps the preset affirmation feature available.
 
@@ -144,7 +158,11 @@ When the app is deployed on the web, `localhost` points to the deployment server
 
 ### Sarvam Translation
 
-For Hindi and Telugu AI responses, the app can optionally use Sarvam translation to translate the reflection to English for the model and translate the model's affirmation back to the selected language.
+For Hindi and Telugu AI responses, the app can use Sarvam Translate around the English assistant step. The flow is:
+
+1. Sarvam translates the user's Hindi or Telugu reflection to English.
+2. The selected AI provider or local Ollama model generates the personalized affirmation in English.
+3. Sarvam translates that English affirmation back to the selected language.
 
 Sarvam keys can be provided in one of these ways:
 

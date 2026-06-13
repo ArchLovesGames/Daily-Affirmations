@@ -60,15 +60,29 @@ Use local mode when you want the assistant to run through Ollama on your machine
 ollama pull llama3.2
 ```
 
-3. Confirm Ollama is running at:
+3. Start Ollama by opening the Ollama desktop app, or run this command if you use a CLI-only setup:
+
+```bash
+ollama serve
+```
+
+Do not start both on the same port.
+
+4. Confirm Ollama is running:
+
+```bash
+curl http://localhost:11434/api/tags
+```
+
+5. Enter this base URL in the app. Do not add `/api/generate`; the app adds that path automatically.
 
 ```text
 http://localhost:11434
 ```
 
-4. Select `Local Ollama assistant` in the app.
-5. Enter the model name, such as `llama3.2`.
-6. Generate the personalized affirmation.
+6. Select `Local Ollama assistant` in the app.
+7. Enter the model name, such as `llama3.2`.
+8. Generate the personalized affirmation.
 
 If Ollama is not running or the model is not available, the app shows an error message and the normal affirmation feature remains usable.
 
@@ -78,10 +92,10 @@ If the app is deployed online and you want it to reach Ollama running on your ow
 
 When Hindi or Telugu is selected, the app shows an optional Sarvam API key field for enhanced translation.
 
-Use this field if you want Sarvam to:
+Use this field if you want Sarvam to translate around the English model output:
 
-- Translate the user's reflection to English for the AI model
-- Translate the generated affirmation back to the selected language
+- First, translate the user's reflection to English for the AI model
+- Then, translate the generated English affirmation back to the selected language
 
 If you do not enter a Sarvam key, the assistant still tries to respond directly in the selected language. The app also applies a small fallback that rewrites common Latin words into Hindi or Telugu script.
 
