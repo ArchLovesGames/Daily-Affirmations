@@ -1,9 +1,29 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Verify/Accessibility.gitlab-ci.yml
+image: python:3.11-slim
 
-# Read more about the feature here: https://docs.gitlab.com/ee/ci/testing/accessibility_testing.html
 stages:
+  - validate
 
+variables:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+before_script:
+  - python --version
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+  - pip install ruff==0.8.4
+
+lint:
+  stage: validate
+  script:
+    - ruff check .
+    - ruff format --check .
+
+compile:
+  stage: validate
+  script:
+    - python -m py_compile app.py

@@ -63,7 +63,7 @@ LANGUAGES = {
         "cloudflare_steps": [
             "To connect Ollama running on your computer to this web app, start Ollama: `ollama serve`.",
             "Open a second terminal and install Cloudflare Tunnel if needed: `brew install cloudflared`.",
-            "Run: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
+            'Run: `cloudflared tunnel --url http://localhost:11434 --http-host-header="localhost:11434"`.',
             "Copy the generated URL ending in `.trycloudflare.com`.",
             "Paste that full URL into the Ollama URL field and keep the terminal open.",
             "This URL is temporary and changes whenever the tunnel restarts. Use it only for testing or demos. Do not share the URL publicly.",
@@ -132,7 +132,7 @@ LANGUAGES = {
         "cloudflare_steps": [
             "अपने computer पर चलने वाले Ollama को इस web app से connect करने के लिए, Ollama: `ollama serve` से शुरू कीजिए।",
             "दूसरा terminal खोलिए और ज़रूरत पड़ने पर Cloudflare Tunnel install कर लीजिए: `brew install cloudflared`.",
-            "चलाएँ: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
+            'चलाएँ: `cloudflared tunnel --url http://localhost:11434 --http-host-header="localhost:11434"`.',
             "`.trycloudflare.com` में ख़त्म होने वाला URL copy कर लीजिए।",
             "उस full URL को Ollama URL field में paste कर दीजिए और terminal खुला रखिए।",
             "यह URL temporary है और tunnel restart होने पर बदल जाएगा। इसे सिर्फ़ testing या demo के लिए इस्तेमाल कीजिए। URL को public में share मत कीजिए।",
@@ -201,7 +201,7 @@ LANGUAGES = {
         "cloudflare_steps": [
             "మీ computer-లో run అవుతున్న Ollama-ని ఈ web app-కి connect చేయడానికి, Ollama: `ollama serve` start చేయండి.",
             "అవసరమైతే రెండవ terminal open చేసి Cloudflare Tunnel install చేయండి: `brew install cloudflared`.",
-            "Run: `cloudflared tunnel --url http://localhost:11434 --http-host-header=\"localhost:11434\"`.",
+            'Run: `cloudflared tunnel --url http://localhost:11434 --http-host-header="localhost:11434"`.',
             "`.trycloudflare.com`-తో అంతమయ్యే URL-ని copy చేయండి.",
             "ఆ full URL-ని Ollama URL field-లో paste చేసి, terminal open-లో ఉంచండి.",
             "ఈ URL temporary-ది. Tunnel restart అయినప్పుడల్లా మారుతుంది. దీన్ని testing-కి, demos-కి మాత్రమే వాడండి. URL-ని public-గా share చేయకండి.",
@@ -478,8 +478,11 @@ def transliterate_latin_phonetically(word, language_name):
 
     while index < len(word):
         vowel_group = next(
-            (group for group in sorted(vowel_groups, key=len, reverse=True)
-             if word.startswith(group, index)),
+            (
+                group
+                for group in sorted(vowel_groups, key=len, reverse=True)
+                if word.startswith(group, index)
+            ),
             None,
         )
 
@@ -496,8 +499,11 @@ def transliterate_latin_phonetically(word, language_name):
             continue
 
         consonant = next(
-            (group for group in sorted(consonants, key=len, reverse=True)
-             if word.startswith(group, index)),
+            (
+                group
+                for group in sorted(consonants, key=len, reverse=True)
+                if word.startswith(group, index)
+            ),
             None,
         )
 
@@ -509,8 +515,11 @@ def transliterate_latin_phonetically(word, language_name):
         native_consonant = consonants[consonant]
         next_index = index + len(consonant)
         next_vowel_group = next(
-            (group for group in sorted(vowel_groups, key=len, reverse=True)
-             if word.startswith(group, next_index)),
+            (
+                group
+                for group in sorted(vowel_groups, key=len, reverse=True)
+                if word.startswith(group, next_index)
+            ),
             None,
         )
 
@@ -632,7 +641,9 @@ def translate_with_sarvam(
         with urlopen(request, timeout=20) as response:
             data = json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
-        raise ValueError(f"Sarvam translation failed with status {error.code}") from error
+        raise ValueError(
+            f"Sarvam translation failed with status {error.code}"
+        ) from error
     except URLError as error:
         raise ValueError("Could not reach Sarvam translation service") from error
     except TimeoutError as error:
@@ -670,27 +681,22 @@ def build_reflection_prompt(
         "Affirmations app. "
         f"{language_instruction} "
         "Keep your response grounded, simple, and brief. "
-
         "First decide whether the user's message contains an actual "
         "reflection, emotion, concern, or personal thought. "
-
         "If it does, write one warm and practical personalized affirmation "
         "based only on what the user actually said. "
         "Avoid flowery, theatrical, or overly poetic language. "
         "Do not invent emotions, struggles, or hidden meanings. "
         "Do not write the word 'Affirmation:' before the response. "
-
         "If the message is only a greeting, a casual question, random text, "
         "or does not contain enough information, politely ask the user to "
         "share how they are feeling today. "
         "Do not generate an affirmation in that case. "
-
         "Keep the response to one or two short sentences. "
         "Do not give medical, legal, political, or religious advice. "
         "Do not diagnose the user. "
         "If the reflection sounds serious or unsafe, respond gently and "
         "suggest reaching out to a trusted person or local support. "
-
         "\n\n"
         f"User message: {reflection}"
     )
@@ -834,27 +840,19 @@ def request_ollama_affirmation(ollama_base_url, model, prompt):
     return response_text
 
 
-st.set_page_config(
-    page_title="Daily Affirmations",
-    page_icon="✨",
-    layout="centered"
-)
+st.set_page_config(page_title="Daily Affirmations", page_icon="✨", layout="centered")
 
-language_name = st.selectbox(
-    "Language / भाषा / భాష",
-    list(LANGUAGES.keys())
-)
+language_name = st.selectbox("Language / भाषा / భాష", list(LANGUAGES.keys()))
 
 language = LANGUAGES[language_name]
 
 st.markdown(
-    f"<h1 style='text-align: center;'>{language['title']}</h1>",
-    unsafe_allow_html=True
+    f"<h1 style='text-align: center;'>{language['title']}</h1>", unsafe_allow_html=True
 )
 
 st.markdown(
     f"<p style='text-align: center; font-size: 18px;'>{language['subtitle']}</p>",
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 image_path = Path("assets/thumbs_up.jpeg")
@@ -890,19 +888,19 @@ else:
             {escape(affirmation)}
         </div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
 st.markdown("---")
 
 st.markdown(
     f"<h2 style='text-align: center;'>{language['reflection_heading']}</h2>",
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 st.markdown(
     f"<p style='text-align: center; font-size: 16px;'>{language['reflection_intro']}</p>",
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 reflection = st.text_area(
@@ -929,7 +927,9 @@ if assistant_mode == language["byot_mode"]:
         language["api_url_label"],
         value=DEFAULT_ONLINE_API_URL,
     )
-    model = st.text_input(language["online_model_label"], value="llama-3.3-70b-versatile")
+    model = st.text_input(
+        language["online_model_label"], value="llama-3.3-70b-versatile"
+    )
 
     if is_sarvam_chat_api(api_url):
         sarvam_api_key = st.text_input(
@@ -996,11 +996,19 @@ if st.button(language["generate_button"]):
                     language_name,
                     language,
                     reflection_text,
-                    api_url=api_url if assistant_mode == language["byot_mode"] else None,
-                    api_key=api_key if assistant_mode == language["byot_mode"] else None,
+                    api_url=api_url
+                    if assistant_mode == language["byot_mode"]
+                    else None,
+                    api_key=api_key
+                    if assistant_mode == language["byot_mode"]
+                    else None,
                     model=model if assistant_mode == language["byot_mode"] else None,
-                    ollama_url=ollama_url if assistant_mode == language["ollama_mode"] else None,
-                    ollama_model=ollama_model if assistant_mode == language["ollama_mode"] else None,
+                    ollama_url=ollama_url
+                    if assistant_mode == language["ollama_mode"]
+                    else None,
+                    ollama_model=ollama_model
+                    if assistant_mode == language["ollama_mode"]
+                    else None,
                     sarvam_api_key=sarvam_api_key,
                 )
 
