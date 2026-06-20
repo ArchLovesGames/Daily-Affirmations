@@ -13,8 +13,8 @@ cache:
 
 before_script:
   - export PYTHON_BIN="$(command -v python3.11 || command -v python3)"
-  - "$PYTHON_BIN" --version
-  - "$PYTHON_BIN" -m venv .ci-venv
+  - '"$PYTHON_BIN" --version'
+  - '"$PYTHON_BIN" -m venv .ci-venv'
   - . .ci-venv/bin/activate
   - python -m pip install --upgrade pip
   - python -m pip install -r requirements.txt
