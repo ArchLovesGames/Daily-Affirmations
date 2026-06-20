@@ -12,18 +12,23 @@ cache:
     - .cache/pip
 
 before_script:
-  - python --version
-  - pip install --upgrade pip
-  - pip install -r requirements.txt
-  - pip install ruff==0.8.4
+  - export PYTHON_BIN="$(command -v python3.11 || command -v python3)"
+  - "$PYTHON_BIN" --version
+  - "$PYTHON_BIN" -m venv .ci-venv
+  - . .ci-venv/bin/activate
+  - python -m pip install --upgrade pip
+  - python -m pip install -r requirements.txt
+  - python -m pip install ruff==0.8.4
 
 lint:
   stage: validate
   script:
+    - . .ci-venv/bin/activate
     - ruff check .
     - ruff format --check .
 
 compile:
   stage: validate
   script:
+    - . .ci-venv/bin/activate
     - python -m py_compile app.py
