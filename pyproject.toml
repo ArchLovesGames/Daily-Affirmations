@@ -2,6 +2,26 @@
 line-length = 88
 target-version = "py311"
 
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+ignore = [
+  "E501",  # Localized UI strings are intentionally kept readable.
+  "S101",  # Tests use assert helpers.
+  "S310",  # The app intentionally calls user-configured AI endpoints.
+  "S311",  # Random affirmations are not security-sensitive.
+  "S603",  # Local check commands are fixed by this repository.
+  "S607",  # Local check commands intentionally use developer PATH.
+]
+
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "app"
+ignore_errors = true
+
+[tool.vulture]
+exclude = [".ci-venv", ".venv"]
+min_confidence = 80

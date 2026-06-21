@@ -1,0 +1,8 @@
+-r requirements.txt
+
+bandit==1.8.0
+mypy==1.13.0
+pip-audit==2.7.3
+pytest==9.0.3
+ruff==0.8.4
+vulture==2.14

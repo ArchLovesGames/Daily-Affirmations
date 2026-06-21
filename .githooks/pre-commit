@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+choose_python() {
+  for candidate in ".venv/bin/python" ".ci-venv/bin/python" "python3"; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+      "$candidate" -c "import ruff, streamlit" >/dev/null 2>&1; then
+      printf "%s\n" "$candidate"
+      return
+    fi
+  done
+
+  for candidate in ".venv/bin/python" ".ci-venv/bin/python" "python3"; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      printf "%s\n" "$candidate"
+      return
+    fi
+  done
+}
+
+PYTHON_BIN="$(choose_python)"
+
+exec "$PYTHON_BIN" scripts/local_checks.py --stage pre-commit

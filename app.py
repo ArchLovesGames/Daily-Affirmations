@@ -1,6 +1,6 @@
-import random
 import json
 import os
+import random
 import re
 from html import escape
 from pathlib import Path
@@ -8,7 +8,6 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 import streamlit as st
-
 
 LANGUAGES = {
     "English": {
@@ -567,7 +566,7 @@ def load_affirmations(language_code):
     if not affirmations_path.exists():
         return None
 
-    with open(affirmations_path, "r", encoding="utf-8") as file:
+    with open(affirmations_path, encoding="utf-8") as file:
         affirmations = file.readlines()
 
     cleaned_affirmations = []
@@ -638,7 +637,7 @@ def translate_with_sarvam(
     )
 
     try:
-        with urlopen(request, timeout=20) as response:
+        with urlopen(request, timeout=20) as response:  # nosec B310
             data = json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
         raise ValueError(
@@ -803,7 +802,7 @@ def request_online_affirmation(api_url, api_key, model, prompt, sarvam_api_key="
         method="POST",
     )
 
-    with urlopen(request, timeout=30) as response:
+    with urlopen(request, timeout=30) as response:  # nosec B310
         data = json.loads(response.read().decode("utf-8"))
 
     return data["choices"][0]["message"]["content"].strip()
@@ -829,7 +828,7 @@ def request_ollama_affirmation(ollama_base_url, model, prompt):
         method="POST",
     )
 
-    with urlopen(request, timeout=60) as response:
+    with urlopen(request, timeout=60) as response:  # nosec B310
         data = json.loads(response.read().decode("utf-8"))
 
     response_text = data.get("response", "").strip()
@@ -871,7 +870,7 @@ if affirmations is None:
 elif not affirmations:
     st.warning(language["empty_data"])
 else:
-    affirmation = random.choice(affirmations)
+    affirmation = random.choice(affirmations)  # nosec B311
 
     st.markdown(
         f"""

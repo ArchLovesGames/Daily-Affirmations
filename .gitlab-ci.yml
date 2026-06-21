@@ -17,18 +17,10 @@ before_script:
   - '"$PYTHON_BIN" -m venv .ci-venv'
   - . .ci-venv/bin/activate
   - python -m pip install --upgrade pip
-  - python -m pip install -r requirements.txt
-  - python -m pip install ruff==0.8.4
+  - python -m pip install -r requirements-dev.txt
 
-lint:
+quality-gates:
   stage: validate
   script:
     - . .ci-venv/bin/activate
-    - ruff check .
-    - ruff format --check .
-
-compile:
-  stage: validate
-  script:
-    - . .ci-venv/bin/activate
-    - python -m py_compile app.py
+    - LOCAL_CHECKS_STRICT=1 python scripts/local_checks.py --stage pre-push

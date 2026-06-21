@@ -72,6 +72,26 @@ If the `streamlit` command is not available, run:
 python3 -m streamlit run app.py
 ```
 
+## Developer Checks
+
+Install local hook tooling:
+
+```bash
+pip install -r requirements-dev.txt
+git config core.hooksPath .githooks
+```
+
+Run the same checks manually:
+
+```bash
+python scripts/local_checks.py --stage pre-commit
+python scripts/local_checks.py --stage pre-push
+```
+
+Pre-commit checks cover formatting, linting, Python compilation, unit tests,
+secret scanning, and affirmation data compliance. Pre-push checks add type
+checking, dead code checking, security scanning, and package audits.
+
 ## AI Reflection Assistant
 
 The AI assistant is optional. The normal daily affirmation still works if the AI service is not configured.

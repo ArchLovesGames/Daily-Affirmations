@@ -4,3 +4,10 @@ repos:
     hooks:
       - id: ruff
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: local-checks
+        name: local project checks
+        entry: python scripts/local_checks.py --stage pre-commit
+        language: system
+        pass_filenames: false
